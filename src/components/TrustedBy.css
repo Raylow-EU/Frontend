@@ -1,0 +1,51 @@
+.trusted-by {
+  padding: 4rem 2rem;
+  text-align: center;
+  /* background-color: white; */
+}
+
+.trusted-by h2 {
+  font-family: "Inter", sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo-grid:nth-child(2) {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.logo-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-item img {
+  max-width: 40px;
+  height: auto;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.logo-item img:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .logo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

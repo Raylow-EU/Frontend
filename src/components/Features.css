@@ -1,0 +1,249 @@
+.features {
+  padding: 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.features-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+}
+
+.features-btn {
+  background-color: #18181b;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 100px;
+  border: none;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.features-header h2 {
+  font-family: "Aeonik", "Inter", sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  color: #18181b;
+}
+
+.highlight {
+  color: #f85a2b;
+}
+
+.features-header p {
+  color: #71717a;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.features-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 6rem;
+}
+
+.features-content.image-first {
+  direction: rtl;
+}
+
+.features-content.image-first > * {
+  direction: ltr;
+}
+
+.features-text h3 {
+  font-family: "Inter", sans-serif;
+  font-size: 1.875rem;
+  margin-bottom: 1.5rem;
+  color: #18181b;
+  font-weight: 600;
+}
+
+.features-text p {
+  color: #71717a;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #18181b;
+  font-size: 1rem;
+}
+
+.check-icon {
+  color: #f85a2b;
+  font-size: 1.125rem;
+}
+
+.metrics-preview {
+  background: white;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f85a2b;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.percentage {
+  color: #22c55e;
+  font-size: 0.875rem;
+}
+
+.metric-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.number {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #18181b;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: #71717a;
+}
+
+.metrics-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.pie-chart,
+.line-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.chart-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chart-circle {
+  width: 100px;
+  height: 100px;
+  background: conic-gradient(#f85a2b 77%, #f4f4f5 23%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #18181b;
+  font-weight: 600;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #71717a;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  background: #f85a2b;
+  border-radius: 50%;
+}
+
+.chart-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #18181b;
+  margin: 1rem 0;
+}
+
+@media (max-width: 1024px) {
+  .features-content,
+  .features-content.image-first {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    direction: ltr;
+  }
+
+  .features-text {
+    order: 1;
+  }
+
+  .metrics-preview {
+    order: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .features-header h2 {
+    font-size: 2rem;
+  }
+
+  .metrics-row {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.features-cta {
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.see-all-features-btn {
+  background-color: #18181b;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 100px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.see-all-features-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
