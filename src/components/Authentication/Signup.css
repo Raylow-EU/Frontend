@@ -1,6 +1,6 @@
 .signup-container {
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 500px;
+  margin: 2rem auto;
   padding: 2rem;
 }
 
@@ -8,21 +8,22 @@
   font-size: 2rem;
   text-align: center;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .subtitle {
   text-align: center;
   color: #666;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-weight: 500;
 }
 
@@ -43,7 +44,7 @@
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .submit-btn:hover {
@@ -52,7 +53,7 @@
 
 .divider {
   text-align: center;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   position: relative;
 }
 

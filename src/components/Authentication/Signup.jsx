@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Signup.css";
-import googleIcon from "../../assets/google-icon.png"; // You'll need to add this icon
+import googleIcon from "../../assets/google.png"; // You'll need to add this icon
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -25,9 +25,7 @@ const Signup = () => {
   return (
     <div className="signup-container">
       <h1>Create an Account</h1>
-      <p className="subtitle">
-        Are you ready to join us! component variant main layer.
-      </p>
+      <p className="subtitle">Are you ready to join us!</p>
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">

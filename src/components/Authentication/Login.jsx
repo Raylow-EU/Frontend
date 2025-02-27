@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Login.css";
-import googleIcon from "../../assets/google-icon.png";
+import googleIcon from "../../assets/google.png";
 
 const Login = () => {
   const [formData, setFormData] = useState({

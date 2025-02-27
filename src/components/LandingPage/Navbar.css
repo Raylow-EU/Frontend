@@ -15,6 +15,14 @@
   gap: 0.5rem;
 }
 
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
 .navbar-links {
   display: flex;
   gap: 2rem;
@@ -23,11 +31,21 @@
 .navbar-links a {
   text-decoration: none;
   color: #333;
+  transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+  color: #f85a2b;
 }
 
 .navbar-auth {
   display: flex;
   gap: 1rem;
+}
+
+.navbar-auth a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .login-btn {
@@ -49,4 +67,9 @@
 .logo-img {
   height: 25px;
   width: 25px;
+}
+
+.logo {
+  color: #333;
+  font-weight: 600;
 }
