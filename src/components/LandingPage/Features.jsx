@@ -1,5 +1,5 @@
 import "./Features.css";
-import DashboardMetrics from "../assets/dashboard.png"; // You'll need to add this image
+// import DashboardMetrics from "../../assets/dashboard.png"; // You'll need to add this image
 
 const Features = () => {
   const featureSections = [

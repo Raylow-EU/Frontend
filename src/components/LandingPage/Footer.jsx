@@ -1,5 +1,5 @@
 import "./Footer.css";
-import logo from "../assets/logo.png"; // Make sure to add your logo
+import logo from "../../assets/logo.png"; // Make sure to add your logo
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

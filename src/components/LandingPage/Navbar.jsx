@@ -1,5 +1,5 @@
 import "./Navbar.css";
-import logo from "../assets/logo.png"; // Make sure the path matches your logo location
+import logo from "../../assets/logo.png"; // Make sure the path matches your logo location
 
 const Navbar = () => {
   return (

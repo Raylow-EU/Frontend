@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import "./Hero.css";
-import DashboardImage from "../assets/dashboard.png"; // You'll need to add this image
+import DashboardImage from "../../assets/dashboard.png"; // You'll need to add this image
 
 const Hero = () => {
   const dashboardRef = useRef(null);

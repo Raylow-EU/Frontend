@@ -1,5 +1,5 @@
 import "./Testimonial.css";
-import testimonialImage from "../assets/eduardo.png"; // Add your image
+import testimonialImage from "../../assets/eduardo.png"; // Add your image
 
 const Testimonial = () => {
   return (
