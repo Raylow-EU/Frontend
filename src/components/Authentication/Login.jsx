@@ -1,8 +1,15 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginUser, signInWithGoogle } from "../../store/thunks/authThunks";
 import "./Login.css";
 import googleIcon from "../../assets/google.png";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,15 +23,30 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Firebase login logic will go here
+    try {
+      await dispatch(loginUser(formData)).unwrap();
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await dispatch(signInWithGoogle()).unwrap();
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Google signin failed:", error);
+    }
   };
 
   return (
     <div className="login-container">
       <h1>Welcome Back</h1>
-      <p className="subtitle">Log in to your account to continue</p>
+      <p className="subtitle">Login to your account</p>
+      {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -49,17 +71,22 @@ const Login = () => {
           />
         </div>
 
-        <button type="submit" className="submit-btn">
-          Log In
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <div className="divider">
           <span>or</span>
         </div>
 
-        <button type="button" className="google-btn">
+        <button
+          type="button"
+          className="google-btn"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+        >
           <img src={googleIcon} alt="Google" />
-          Log in with Google
+          Sign in with Google
         </button>
 
         <p className="signup-link">
