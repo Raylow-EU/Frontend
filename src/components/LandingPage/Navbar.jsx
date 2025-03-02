@@ -4,25 +4,25 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">
+    <nav className="landing-navbar">
+      <div className="landing-navbar-logo">
         <Link to="/">
-          <img src={logo} alt="Raylow Logo" className="logo-img" />
-          <span className="logo">RAYLOW</span>
+          <img src={logo} alt="Raylow Logo" className="landing-logo-img" />
+          <span className="landing-logo">RAYLOW</span>
         </Link>
       </div>
-      <div className="navbar-links">
+      <div className="landing-navbar-links">
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/docs">Docs</Link>
         <Link to="/blog">Blog</Link>
       </div>
-      <div className="navbar-auth">
+      <div className="landing-navbar-auth">
         <Link to="/login">
-          <button className="login-btn">Log in</button>
+          <button className="landing-login-btn">Log in</button>
         </Link>
         <Link to="/signup">
-          <button className="signup-btn">Sign up</button>
+          <button className="landing-signup-btn">Sign up</button>
         </Link>
       </div>
     </nav>

@@ -12,8 +12,12 @@ export const registerUser = createAsyncThunk(
   async ({ email, password, fullName }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const user = await registerWithEmailAndPassword(email, password);
-      dispatch(setUser({ ...user, displayName: fullName }));
+      const user = await registerWithEmailAndPassword(
+        email,
+        password,
+        fullName
+      );
+      dispatch(setUser(user));
       return user;
     } catch (error) {
       dispatch(setError(error.message));

@@ -10,6 +10,11 @@ import LandingPage from "./components/LandingPage/LandingPage";
 import Login from "./components/Authentication/Login";
 import Signup from "./components/Authentication/SignUp";
 import Dashboard from "./components/Dashboard/Dashboard";
+import DashboardHome from "./components/Pages/DashboardHome";
+import CSRD from "./components/Pages/CSRD";
+import Reports from "./components/Pages/Reports";
+import Team from "./components/Pages/Team";
+import Settings from "./components/Pages/Settings";
 import Navbar from "./components/LandingPage/Navbar";
 
 const PrivateRoute = ({ children }) => {
@@ -51,7 +56,13 @@ const App = () => {
               <Dashboard />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<DashboardHome />} />
+          <Route path="csrd" element={<CSRD />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="team" element={<Team />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
       </Routes>
     </Router>
   );

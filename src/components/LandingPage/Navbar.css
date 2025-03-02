@@ -1,21 +1,21 @@
-.navbar {
+.landing-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
   /* background-color: white; */
   border-bottom: 1px solid #eaeaea;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
-.navbar-logo {
+.landing-navbar-logo {
   font-size: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.navbar-logo a {
+.landing-navbar-logo a {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -23,39 +23,39 @@
   color: inherit;
 }
 
-.navbar-links {
+.landing-navbar-links {
   display: flex;
   gap: 2rem;
 }
 
-.navbar-links a {
+.landing-navbar-links a {
   text-decoration: none;
   color: #333;
   transition: color 0.2s ease;
 }
 
-.navbar-links a:hover {
+.landing-navbar-links a:hover {
   color: #f85a2b;
 }
 
-.navbar-auth {
+.landing-navbar-auth {
   display: flex;
   gap: 1rem;
 }
 
-.navbar-auth a {
+.landing-navbar-auth a {
   text-decoration: none;
   color: inherit;
 }
 
-.login-btn {
+.landing-login-btn {
   padding: 0.5rem 1rem;
   border: none;
   background: none;
   cursor: pointer;
 }
 
-.signup-btn {
+.landing-signup-btn {
   padding: 0.5rem 1rem;
   background-color: #f85a2b;
   color: white;
@@ -64,12 +64,12 @@
   cursor: pointer;
 }
 
-.logo-img {
+.landing-logo-img {
   height: 25px;
   width: 25px;
 }
 
-.logo {
+.landing-logo {
   color: #333;
   font-weight: 600;
 }

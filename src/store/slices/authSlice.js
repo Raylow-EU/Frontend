@@ -16,8 +16,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
+      console.log("setUser reducer called with:", action.payload); // Debug log
       state.user = action.payload;
-      state.loading = false;
       state.error = null;
     },
     setLoading: (state, action) => {
@@ -29,7 +29,6 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      state.loading = false;
       state.error = null;
     },
   },
