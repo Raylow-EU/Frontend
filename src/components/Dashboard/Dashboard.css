@@ -49,6 +49,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   min-height: 100vh;
+  width: 100%;
   background-color: #f8f9fa;
 }
 
@@ -74,7 +75,7 @@
 .toggle-sidebar {
   position: absolute;
   right: 0px;
-  top: 70px;
+  top: 400px;
   width: 24px;
   height: 24px;
   background: #f85a2b;
