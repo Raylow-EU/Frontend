@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +17,49 @@ import Reports from "./components/Pages/Reports";
 import Team from "./components/Pages/Team";
 import Settings from "./components/Pages/Settings";
 import Navbar from "./components/LandingPage/Navbar";
+import Onboarding from "./components/Onboarding/Onboarding";
+import { checkOnboardingStatus } from "./firebase/onboardingService";
+
+// Component to check if user needs onboarding or can proceed to dashboard
+const OnboardingCheck = ({ children }) => {
+  const { user } = useSelector((state) => state.auth);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (user?.uid) {
+        try {
+          const isCompleted = await checkOnboardingStatus(user.uid);
+          setOnboardingCompleted(isCompleted);
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+          setOnboardingCompleted(false);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkStatus();
+  }, [user]);
+
+  if (loading) {
+    return <div className="loading-spinner">Loading...</div>;
+  }
+
+  if (onboardingCompleted === false) {
+    return <Navigate to="/onboarding" />;
+  }
+
+  return children;
+};
+
+OnboardingCheck.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -70,10 +114,20 @@ const App = () => {
           }
         />
         <Route
+          path="/onboarding"
+          element={
+            <PrivateRoute>
+              <Onboarding />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <OnboardingCheck>
+                <Dashboard />
+              </OnboardingCheck>
             </PrivateRoute>
           }
         >

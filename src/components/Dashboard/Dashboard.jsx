@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
 import { logoutUserThunk } from "../../store/thunks/authThunks";
 import "./Dashboard.css";
@@ -12,7 +12,6 @@ import {
 } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import logo from "../../assets/logo.png";
 import PropTypes from "prop-types";
 
@@ -20,7 +19,6 @@ const Dashboard = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
@@ -106,58 +104,6 @@ const Dashboard = () => {
       <main className="main-content">
         <Outlet />
       </main>
-
-      <aside className="profile-sidebar">
-        <div className="profile-card">
-          <div className="profile-header">
-            <img
-              src={user?.photoURL || "https://ui-avatars.com/api/?name=User"}
-              alt="Profile"
-            />
-            <BsThreeDotsVertical className="menu-dots" />
-          </div>
-          <h2>{user?.displayName || "User"}</h2>
-          <p className="role">Mercadona - Admin</p>
-          <div className="social-links">{/* Add social icons here */}</div>
-          <p className="bio">
-            Minim dolor in amet nulla laboris enim dolore consequat proident...
-          </p>
-          <button className="view-profile">VIEW PROFILE</button>
-        </div>
-
-        <div className="team-section">
-          <h3>Mercadona Users</h3>
-          <p>Connect and message other Mercadona employees to gather info.</p>
-          <div className="search-box">
-            <input type="text" placeholder="Placeholder" />
-          </div>
-          <div className="team-list">
-            <div className="team-member">
-              <img
-                src="https://ui-avatars.com/api/?name=Wade+Warren"
-                alt="Wade Warren"
-              />
-              <div className="member-info">
-                <h4>Wade Warren</h4>
-                <p>Operations</p>
-              </div>
-              <button className="message-btn">MESSAGE</button>
-            </div>
-            <div className="team-member">
-              <img
-                src="https://ui-avatars.com/api/?name=Robert+Fox"
-                alt="Robert Fox"
-              />
-              <div className="member-info">
-                <h4>Robert Fox</h4>
-                <p>Logistics</p>
-              </div>
-              <button className="message-btn">MESSAGE</button>
-            </div>
-          </div>
-          <button className="team-page-btn">GO TO TEAM PAGE</button>
-        </div>
-      </aside>
     </div>
   );
 };

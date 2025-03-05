@@ -1,0 +1,179 @@
+/* Layout for dashboard home with sidebar */
+.dashboard-home-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+}
+
+.dashboard-main {
+  width: 100%;
+}
+
+/* Profile Sidebar Styles */
+.profile-sidebar {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card {
+  margin-bottom: 2rem;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.profile-header img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.menu-dots {
+  cursor: pointer;
+  color: #666;
+}
+
+.profile-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.role {
+  color: #666;
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+}
+
+.bio {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.view-profile {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.view-profile:hover {
+  background-color: #f5f5f5;
+}
+
+.team-section h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.team-section > p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.search-box {
+  margin-bottom: 1rem;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.team-member:hover {
+  background-color: #f5f5f5;
+}
+
+.team-member img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.member-info h4 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.member-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.message-btn {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.message-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.team-page-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f85a2b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.team-page-btn:hover {
+  background-color: #e64a1c;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .dashboard-home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sidebar {
+    margin-top: 1.5rem;
+  }
+}
