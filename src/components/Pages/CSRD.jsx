@@ -282,6 +282,9 @@ const CSRD = () => {
                       )
                     }
                   />
+                  <span className="helper-text">
+                    Provide additional information
+                  </span>
                 </div>
               </div>
             </div>

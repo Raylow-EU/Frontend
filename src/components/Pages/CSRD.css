@@ -127,104 +127,184 @@
 /* Tabs navigation */
 .csrd-tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
   overflow-x: auto;
+  scrollbar-width: none; /* For Firefox */
+}
+
+.csrd-tabs::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
 
 .tab-button {
-  padding: 12px 20px;
-  margin-right: 50px;
-  background: transparent;
+  padding: 0.8rem 1.5rem;
+  background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  font-size: 16px;
-  color: #6b7280;
+  color: #666;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
+.tab-button:hover {
+  color: #333;
+}
+
 .tab-button.active {
-  color: #e94c2b;
-  border-bottom: 3px solid #e94c2b;
-  font-weight: 600;
+  color: #f85a2b;
+  border-bottom-color: #f85a2b;
 }
 
 /* Form container */
 .csrd-form-container {
-  /* background-color: #f3f4f6; */
-  border-radius: 8px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  margin-bottom: 2rem;
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  flex: 1 1 calc(50% - 0.75rem);
+  min-width: 250px;
 }
 
 .form-group.full-width {
-  grid-column: span 2;
+  flex: 1 1 100%;
 }
 
 .form-label-group {
-  margin-bottom: 8px;
-}
-
-.form-label-group > label {
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 8px;
-  display: block;
+  margin-bottom: 0.5rem;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-field label {
-  margin-bottom: 8px;
-  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
 }
 
-.form-field.error label {
-  color: #dc2626;
-}
-
-.required {
-  color: #dc2626;
-}
-
-.error-message {
-  color: #dc2626;
-  font-size: 14px;
-  margin-top: 4px;
+.form-field .required {
+  color: #e53935;
+  margin-left: 2px;
 }
 
 .form-field input,
 .form-field select,
 .form-field textarea {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: white;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #fff;
 }
 
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #f85a2b;
+  box-shadow: 0 0 0 2px rgba(248, 90, 43, 0.1);
+  outline: none;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #aaa;
+}
+
+.form-field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Submit Button */
+.form-submit-container {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-submit-button {
+  padding: 0.8rem 2rem;
+  background-color: #f85a2b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-submit-button:hover {
+  background-color: #e04718;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(248, 90, 43, 0.2);
+}
+
+.form-submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Validation Styles */
 .form-field.error input,
-.form-field.error select {
-  border-color: #dc2626;
+.form-field.error select,
+.form-field.error textarea {
+  border-color: #e53935;
+}
+
+.error-message {
+  color: #e53935;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Animation for section transitions */
+.form-section {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Chat widget button */
@@ -336,35 +416,6 @@
     right: 5%;
     height: 400px;
   }
-}
-
-/* Form submit button */
-.form-submit-container {
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
-}
-
-.form-submit-button {
-  background-color: #e94c2b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  min-width: 200px;
-}
-
-.form-submit-button:hover {
-  background-color: #d03a1b;
-}
-
-.form-submit-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
 }
 
 .typing-indicator {
