@@ -116,12 +116,18 @@ const DashboardHome = () => {
     },
   };
 
+  // Function to get user's first name
+  const getFirstName = () => {
+    if (!user || !user.displayName) return "User";
+    return user.displayName.split(" ")[0];
+  };
+
   return (
     <div className="dashboard-home-layout">
       <div className="dashboard-main">
         <div className="dashboard-header">
           <div className="header-top-row">
-            <h1 className="greeting">Hello, {user?.displayName || "Robert"}</h1>
+            <h1 className="greeting">Hello, {getFirstName()}</h1>
             <div className="date-display">
               <BsCalendar className="calendar-icon" />
               <span>{formattedDate}</span>
@@ -253,14 +259,14 @@ const DashboardHome = () => {
             <img
               src={
                 user?.photoURL ||
-                "https://ui-avatars.com/api/?name=Robert&background=e95c2c&color=fff"
+                `https://ui-avatars.com/api/?name=${getFirstName()}&background=e95c2c&color=fff`
               }
               alt="Profile"
               className="profile-avatar"
             />
             <BsThreeDotsVertical className="menu-dots" />
           </div>
-          <h2 className="profile-name">Robert</h2>
+          <h2 className="profile-name">{getFirstName()}</h2>
           <p className="profile-role">Mercadona - Admin</p>
           <div className="social-links">
             <a href="#" className="social-icon dribbble">

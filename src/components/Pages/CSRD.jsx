@@ -43,38 +43,101 @@ const CSRD = () => {
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
+    // Store the input for the API call
+    const question = input.trim();
+
     // Clear input and set loading state
     setInput("");
     setLoading(true);
 
+    // Create a temporary ID for the assistant message
+    const tempId = Date.now().toString();
+
+    // Add empty assistant message that we'll update with streamed content
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: "",
+        id: tempId,
+      },
+    ]);
+
     try {
-      // Send query to backend
-      const res = await fetch("http://localhost:8000/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: input }),
+      // Create an EventSource connection to the streaming endpoint
+      const eventSource = new EventSource(
+        `http://localhost:8000/query/stream?question=${encodeURIComponent(
+          question
+        )}`
+      );
+
+      // Handle incoming message chunks
+      eventSource.onmessage = (event) => {
+        const chunk = event.data;
+
+        // Update the assistant message with the new chunk
+        setMessages((prevMessages) =>
+          prevMessages.map((message) =>
+            message.id === tempId
+              ? { ...message, content: message.content + chunk }
+              : message
+          )
+        );
+
+        // Auto scroll to the latest message
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+
+      // Handle errors
+      eventSource.onerror = (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+        setLoading(false);
+
+        // Remove the loading indicator
+        setLoading(false);
+      };
+
+      // Handle completion - assuming the backend sends a special "done" message
+      eventSource.addEventListener("done", () => {
+        console.log("Stream completed");
+        eventSource.close();
+        setLoading(false);
       });
 
-      const data = await res.json();
+      // Add a timeout in case the connection hangs
+      const timeout = setTimeout(() => {
+        console.log("Stream timeout");
+        eventSource.close();
+        setLoading(false);
+      }, 30000); // 30 seconds timeout
 
-      // Add assistant response to chat history
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data.answer.text || "Sorry, I couldn't find an answer.",
-        },
-      ]);
+      // Clear timeout when we get a message
+      eventSource.onmessage = (event) => {
+        clearTimeout(timeout); // Reset timeout on each message
+        const chunk = event.data;
+
+        // Update the assistant message with the new chunk
+        setMessages((prevMessages) =>
+          prevMessages.map((message) =>
+            message.id === tempId
+              ? { ...message, content: message.content + chunk }
+              : message
+          )
+        );
+
+        // Auto scroll to the latest message
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+
+      // Cleanup function
+      return () => {
+        clearTimeout(timeout);
+        eventSource.close();
+        setLoading(false);
+      };
     } catch (error) {
-      console.error("Error fetching response:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Error fetching response. Please try again.",
-        },
-      ]);
-    } finally {
+      console.error("Error setting up streaming:", error);
       setLoading(false);
     }
   };
@@ -550,12 +613,23 @@ const CSRD = () => {
             )}
             {messages.map((message, index) => (
               <div
-                key={index}
+                key={message.id || index}
                 className={`message ${
                   message.role === "user" ? "user-message" : "assistant-message"
                 }`}
               >
-                <div className="message-content">{message.content}</div>
+                <div className="message-content">
+                  {message.content || " "}
+                  {message.role === "assistant" &&
+                    loading &&
+                    index === messages.length - 1 && (
+                      <span className="typing-indicator">
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                      </span>
+                    )}
+                </div>
               </div>
             ))}
             {loading && (
