@@ -1,17 +1,31 @@
 import { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { db } from "../../firebase/config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import "./CSRD.css";
 import { BsChat, BsX } from "react-icons/bs";
+import { toast } from "react-toastify";
 
 const CSRD = () => {
+  const { user } = useSelector((state) => state.auth);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // New state for the tabbed form
+  // Form state
   const [activeTab, setActiveTab] = useState("materiality");
   const [chatWidgetOpen, setChatWidgetOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    materiality: {},
+    stakeholder: {},
+    governance: {},
+    target: {},
+    data: {},
+  });
 
+  // Scroll to bottom of chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -20,6 +34,7 @@ const CSRD = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Handle chat submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -61,6 +76,60 @@ const CSRD = () => {
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle form field changes
+  const handleFormChange = (category, fieldName, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [fieldName]: value,
+      },
+    }));
+  };
+
+  // Handle form submission
+  const handleFormSubmit = async () => {
+    if (!user) {
+      toast.error("You must be logged in to submit the form");
+      return;
+    }
+
+    console.log("Current user:", user); // Add this to debug
+
+    setSubmitting(true);
+
+    try {
+      // Ensure user is properly authenticated
+      if (!user.uid) {
+        throw new Error("User ID is missing");
+      }
+
+      // Create a submission object with metadata
+      const submission = {
+        userId: user.uid,
+        userName: user.displayName || "Anonymous",
+        timestamp: serverTimestamp(),
+        formData: formData,
+      };
+
+      console.log("Submitting data:", submission); // Debug log
+
+      // Add to Firestore
+      const docRef = await addDoc(
+        collection(db, "csrdSubmissions"),
+        submission
+      );
+      console.log("Document written with ID:", docRef.id);
+
+      toast.success("Your CSRD form has been submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(`Failed to submit form: ${error.message}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -116,7 +185,16 @@ const CSRD = () => {
                     <label>
                       Label <span className="required">*</span>
                     </label>
-                    <select defaultValue="">
+                    <select
+                      defaultValue=""
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "requiredSelect",
+                          e.target.value
+                        )
+                      }
+                    >
                       <option value="" disabled>
                         Text
                       </option>
@@ -130,7 +208,17 @@ const CSRD = () => {
               <div className="form-group">
                 <div className="form-field">
                   <label>Label</label>
-                  <input type="text" placeholder="Hint text" />
+                  <input
+                    type="text"
+                    placeholder="Hint text"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "materiality",
+                        "optionalInput",
+                        e.target.value
+                      )
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -143,14 +231,23 @@ const CSRD = () => {
                     <label>
                       Label <span className="required">*</span>
                     </label>
-                    <select defaultValue="">
+                    <select
+                      defaultValue=""
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "errorSelect",
+                          e.target.value
+                        )
+                      }
+                    >
                       <option value="" disabled>
                         Text
                       </option>
                       <option value="option1">Option 1</option>
                       <option value="option2">Option 2</option>
                     </select>
-                    <p className="error-message">Error message</p>
+                    <div className="error-message">Error message</div>
                   </div>
                 </div>
               </div>
@@ -160,7 +257,17 @@ const CSRD = () => {
                   <label>
                     Label <span className="required">*</span>
                   </label>
-                  <input type="text" placeholder="Hint text" />
+                  <input
+                    type="text"
+                    placeholder="Hint text"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "materiality",
+                        "requiredInput",
+                        e.target.value
+                      )
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -171,12 +278,38 @@ const CSRD = () => {
                   <label>Selected</label>
                   <div className="form-field">
                     <label>Label</label>
-                    <select defaultValue="selected">
+                    <select
+                      defaultValue="selected"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "selectedSelect",
+                          e.target.value
+                        )
+                      }
+                    >
                       <option value="selected">Selected item</option>
                       <option value="option1">Option 1</option>
                       <option value="option2">Option 2</option>
                     </select>
                   </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-field">
+                  <label>Label</label>
+                  <input
+                    type="text"
+                    placeholder="Hint text"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "materiality",
+                        "anotherOptionalInput",
+                        e.target.value
+                      )
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -189,7 +322,16 @@ const CSRD = () => {
                     <label>
                       Label <span className="required">*</span>
                     </label>
-                    <select defaultValue="selected">
+                    <select
+                      defaultValue="selected"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "requiredSelectedSelect",
+                          e.target.value
+                        )
+                      }
+                    >
                       <option value="selected">Selected item</option>
                       <option value="option1">Option 1</option>
                       <option value="option2">Option 2</option>
@@ -203,7 +345,17 @@ const CSRD = () => {
                   <label>
                     Label <span className="required">*</span>
                   </label>
-                  <input type="text" placeholder="Hint text" />
+                  <input
+                    type="text"
+                    placeholder="Hint text"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "materiality",
+                        "finalRequiredInput",
+                        e.target.value
+                      )
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -212,7 +364,17 @@ const CSRD = () => {
               <div className="form-group full-width">
                 <div className="form-field">
                   <label>Label</label>
-                  <textarea placeholder="Hint text" rows="4"></textarea>
+                  <textarea
+                    placeholder="Hint text"
+                    rows="4"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "materiality",
+                        "textareaInput",
+                        e.target.value
+                      )
+                    }
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -222,24 +384,142 @@ const CSRD = () => {
         {/* Placeholder content for other tabs */}
         {activeTab === "stakeholder" && (
           <div className="form-section">
-            Stakeholder Engagement form fields will go here
+            <div className="form-row">
+              <div className="form-group full-width">
+                <div className="form-field">
+                  <label>
+                    Stakeholder Groups <span className="required">*</span>
+                  </label>
+                  <select
+                    onChange={(e) =>
+                      handleFormChange(
+                        "stakeholder",
+                        "stakeholderGroups",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Select stakeholder groups
+                    </option>
+                    <option value="employees">Employees</option>
+                    <option value="customers">Customers</option>
+                    <option value="investors">Investors</option>
+                    <option value="suppliers">Suppliers</option>
+                    <option value="communities">Local Communities</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group full-width">
+                <div className="form-field">
+                  <label>Engagement Method</label>
+                  <textarea
+                    placeholder="Describe your stakeholder engagement methods"
+                    rows="4"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "stakeholder",
+                        "engagementMethod",
+                        e.target.value
+                      )
+                    }
+                  ></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
         {activeTab === "governance" && (
           <div className="form-section">
-            Governance & Oversight form fields will go here
+            <div className="form-row">
+              <div className="form-group full-width">
+                <div className="form-field">
+                  <label>
+                    Sustainability Governance{" "}
+                    <span className="required">*</span>
+                  </label>
+                  <textarea
+                    placeholder="Describe your sustainability governance structure"
+                    rows="4"
+                    onChange={(e) =>
+                      handleFormChange(
+                        "governance",
+                        "sustainabilityGovernance",
+                        e.target.value
+                      )
+                    }
+                  ></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
         {activeTab === "target" && (
           <div className="form-section">
-            Target & Actions form fields will go here
+            <div className="form-row">
+              <div className="form-group full-width">
+                <div className="form-field">
+                  <label>
+                    Carbon Reduction Target <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 50% by 2030"
+                    onChange={(e) =>
+                      handleFormChange("target", "carbonTarget", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
         {activeTab === "data" && (
           <div className="form-section">
-            Data & Reporting form fields will go here
+            <div className="form-row">
+              <div className="form-group full-width">
+                <div className="form-field">
+                  <label>
+                    Reporting Framework <span className="required">*</span>
+                  </label>
+                  <select
+                    onChange={(e) =>
+                      handleFormChange(
+                        "data",
+                        "reportingFramework",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="" disabled selected>
+                      Select reporting framework
+                    </option>
+                    <option value="gri">GRI Standards</option>
+                    <option value="sasb">SASB</option>
+                    <option value="tcfd">TCFD</option>
+                    <option value="csrd">CSRD</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Submit Button */}
+        <div className="form-submit-container">
+          <button
+            className="form-submit-button"
+            onClick={handleFormSubmit}
+            disabled={submitting}
+          >
+            {submitting ? "Submitting..." : "Submit CSRD Form"}
+          </button>
+        </div>
       </div>
 
       {/* Chat Widget */}
@@ -287,6 +567,7 @@ const CSRD = () => {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
           <form onSubmit={handleSubmit} className="chat-input-container">
             <input

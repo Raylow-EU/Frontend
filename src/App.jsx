@@ -19,6 +19,8 @@ import Settings from "./components/Pages/Settings";
 import Navbar from "./components/LandingPage/Navbar";
 import Onboarding from "./components/Onboarding/Onboarding";
 import { checkOnboardingStatus } from "./firebase/onboardingService";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Component to check if user needs onboarding or can proceed to dashboard
 const OnboardingCheck = ({ children }) => {
@@ -93,6 +95,7 @@ PrivateRoute.propTypes = {
 const App = () => {
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={5000} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route

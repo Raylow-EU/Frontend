@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
-import { logoutUserThunk } from "../../store/thunks/authThunks";
+import { logout } from "../../store/slices/authSlice.js";
 import "./Dashboard.css";
 import {
   FaHome,
@@ -19,14 +20,24 @@ const Dashboard = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await dispatch(logoutUserThunk()).unwrap();
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
+  // Determine if sidebar should be collapsed based on current route
+  useEffect(() => {
+    if (location.pathname === "/dashboard") {
+      setCollapsed(false);
+    } else {
+      setCollapsed(true);
     }
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
   };
 
   const StatCard = ({ value, label, change }) => (
@@ -48,60 +59,73 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <aside className="sidebar">
+      <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
         <div className="logo">
           <img src={logo} alt="Raylow" />
-          <span>RAYLOW</span>
+          {!collapsed && <span>RAYLOW</span>}
         </div>
+
+        <button
+          className="toggle-sidebar"
+          onClick={toggleSidebar}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? "›" : "‹"}
+        </button>
 
         <nav className="nav-menu">
           <Link
             to="/dashboard"
             className={location.pathname === "/dashboard" ? "active" : ""}
+            title="Home"
           >
-            <FaHome /> Home
+            <FaHome /> {!collapsed && "Home"}
           </Link>
           <Link
             to="/dashboard/csrd"
             className={location.pathname === "/dashboard/csrd" ? "active" : ""}
+            title="CSRD"
           >
-            <FaCubes /> CSRD
+            <FaCubes /> {!collapsed && "CSRD"}
           </Link>
           <Link
             to="/dashboard/reports"
             className={
               location.pathname === "/dashboard/reports" ? "active" : ""
             }
+            title="Reports"
           >
-            <FaChartBar /> Reports
+            <FaChartBar /> {!collapsed && "Reports"}
           </Link>
           <Link
             to="/dashboard/team"
             className={location.pathname === "/dashboard/team" ? "active" : ""}
+            title="Team"
           >
-            <FaUsers /> Team
+            <FaUsers /> {!collapsed && "Team"}
           </Link>
           <Link
             to="/dashboard/settings"
             className={
               location.pathname === "/dashboard/settings" ? "active" : ""
             }
+            title="Settings"
           >
-            <FaCog /> Settings
+            <FaCog /> {!collapsed && "Settings"}
           </Link>
         </nav>
 
         <div className="sidebar-footer">
-          <a href="#">
-            <AiOutlineQuestionCircle /> Help & Information
+          <a href="#" title="Help & Information">
+            <AiOutlineQuestionCircle /> {!collapsed && "Help & Information"}
           </a>
-          <a href="#" onClick={handleLogout}>
-            <BiLogOut /> Log Out
+          <a href="#" onClick={handleLogout} title="Log Out">
+            <BiLogOut /> {!collapsed && "Log Out"}
           </a>
         </div>
       </aside>
 
-      <main className="main-content">
+      <main className={`main-content ${collapsed ? "expanded" : ""}`}>
         <Outlet />
       </main>
     </div>
