@@ -327,7 +327,7 @@
   background-color: transparent;
   border-radius: 12px;
   padding: 24px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   margin-bottom: 0;
 }
@@ -420,10 +420,10 @@
 
 /* Team section */
 .team-section {
-  background-color: white;
+  /* background-color: white; */
   border-radius: 12px;
   padding: 24px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .team-header h3 {
