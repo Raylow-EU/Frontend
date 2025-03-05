@@ -18,8 +18,28 @@ import Settings from "./components/Pages/Settings";
 import Navbar from "./components/LandingPage/Navbar";
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
-  return user ? children : <Navigate to="/login" />;
+  const { user, loading } = useSelector((state) => state.auth);
+
+  // Check if we're still loading OR if user exists
+  if (loading) {
+    console.log("Auth state is loading...");
+    return <div className="loading-spinner">Loading...</div>;
+  }
+
+  // Log the authentication state for debugging
+  console.log(
+    "Auth state in PrivateRoute:",
+    user ? "Authenticated" : "Not authenticated"
+  );
+
+  // If we have a user, render the protected route
+  if (user) {
+    return children;
+  }
+
+  // Otherwise redirect to login
+  console.log("No user found, redirecting to login");
+  return <Navigate to="/login" />;
 };
 
 PrivateRoute.propTypes = {

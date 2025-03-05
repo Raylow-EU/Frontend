@@ -7,18 +7,26 @@ import {
 } from "../../firebase/auth";
 import { setUser, setLoading, setError, logout } from "../slices/authSlice";
 
+// Helper to extract serializable user data
+const extractUserData = (user) => ({
+  uid: user.uid,
+  email: user.email,
+  displayName: user.displayName || "",
+});
+
 export const registerUser = createAsyncThunk(
   "auth/register",
   async ({ email, password, fullName }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const user = await registerWithEmailAndPassword(
+      const userCredential = await registerWithEmailAndPassword(
         email,
         password,
         fullName
       );
-      dispatch(setUser(user));
-      return user;
+      const userData = extractUserData(userCredential);
+      dispatch(setUser(userData));
+      return userData;
     } catch (error) {
       dispatch(setError(error.message));
       throw error;
@@ -31,9 +39,10 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const user = await loginWithEmailAndPassword(email, password);
-      dispatch(setUser(user));
-      return user;
+      const userCredential = await loginWithEmailAndPassword(email, password);
+      const userData = extractUserData(userCredential);
+      dispatch(setUser(userData));
+      return userData;
     } catch (error) {
       dispatch(setError(error.message));
       throw error;
@@ -46,9 +55,10 @@ export const signInWithGoogle = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const user = await loginWithGoogle();
-      dispatch(setUser(user));
-      return user;
+      const userCredential = await loginWithGoogle();
+      const userData = extractUserData(userCredential);
+      dispatch(setUser(userData));
+      return userData;
     } catch (error) {
       dispatch(setError(error.message));
       throw error;
@@ -62,6 +72,7 @@ export const logoutUserThunk = createAsyncThunk(
     try {
       await logoutUser();
       dispatch(logout());
+      return null;
     } catch (error) {
       dispatch(setError(error.message));
       throw error;
