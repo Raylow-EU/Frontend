@@ -293,188 +293,75 @@ const CSRD = () => {
         <div className="csrd-form-container">
           {activeTab === "materiality" && (
             <div className="form-section">
+              <div className="section-header">
+                <h2>Materiality Assessment</h2>
+                <p className="section-description">
+                  Identify and prioritize the sustainability issues that are
+                  most significant to your organization and stakeholders.
+                </p>
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <div className="form-label-group">
-                    <label>Required</label>
+                    <label>Assessment Details</label>
                     <div className="form-field">
                       <label>
-                        Label <span className="required">*</span>
+                        Assessment Method <span className="required">*</span>
                       </label>
                       <select
                         defaultValue=""
                         onChange={(e) =>
                           handleFormChange(
                             "materiality",
-                            "requiredSelect",
+                            "assessmentMethod",
                             e.target.value
                           )
                         }
                       >
                         <option value="" disabled>
-                          Text
+                          Select assessment method
                         </option>
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
+                        <option value="doubleMaterilaity">
+                          Double Materiality
+                        </option>
+                        <option value="stakeholderEngagement">
+                          Stakeholder Engagement
+                        </option>
+                        <option value="impactAssessment">
+                          Impact Assessment
+                        </option>
                       </select>
+                      <span className="helper-text">
+                        The methodology used to assess materiality
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="form-group">
                   <div className="form-field">
-                    <label>Label</label>
-                    <input
-                      type="text"
-                      placeholder="Hint text"
+                    <label>Assessment Frequency</label>
+                    <select
                       onChange={(e) =>
                         handleFormChange(
                           "materiality",
-                          "optionalInput",
+                          "assessmentFrequency",
                           e.target.value
                         )
                       }
-                    />
+                    >
+                      <option value="" disabled selected>
+                        Select frequency
+                      </option>
+                      <option value="annual">Annual</option>
+                      <option value="biannual">Bi-annual</option>
+                      <option value="quarterly">Quarterly</option>
+                    </select>
                     <span className="helper-text">
-                      Provide additional information
+                      How often your organization conducts materiality
+                      assessments
                     </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="form-label-group">
-                    <label>Error</label>
-                    <div className="form-field error">
-                      <label>
-                        Label <span className="required">*</span>
-                      </label>
-                      <select
-                        defaultValue=""
-                        onChange={(e) =>
-                          handleFormChange(
-                            "materiality",
-                            "errorSelect",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="" disabled>
-                          Text
-                        </option>
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
-                      </select>
-                      <div className="error-message">Error message</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-field">
-                    <label>
-                      Label <span className="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Hint text"
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "requiredInput",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="form-label-group">
-                    <label>Selected</label>
-                    <div className="form-field">
-                      <label>Label</label>
-                      <select
-                        defaultValue="selected"
-                        onChange={(e) =>
-                          handleFormChange(
-                            "materiality",
-                            "selectedSelect",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="selected">Selected item</option>
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-field">
-                    <label>Label</label>
-                    <input
-                      type="text"
-                      placeholder="Hint text"
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "anotherOptionalInput",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="form-label-group">
-                    <label>Required + Selected</label>
-                    <div className="form-field">
-                      <label>
-                        Label <span className="required">*</span>
-                      </label>
-                      <select
-                        defaultValue="selected"
-                        onChange={(e) =>
-                          handleFormChange(
-                            "materiality",
-                            "requiredSelectedSelect",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="selected">Selected item</option>
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-field">
-                    <label>
-                      Label <span className="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Hint text"
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "finalRequiredInput",
-                          e.target.value
-                        )
-                      }
-                    />
                   </div>
                 </div>
               </div>
@@ -482,17 +369,91 @@ const CSRD = () => {
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
-                    <label>Label</label>
+                    <label>
+                      Top Material Topics <span className="required">*</span>
+                    </label>
                     <textarea
-                      placeholder="Hint text"
-                      rows="4"
+                      placeholder="List your top 3-5 material topics identified in your assessment"
                       onChange={(e) =>
                         handleFormChange(
                           "materiality",
-                          "textareaInput",
+                          "materialTopics",
                           e.target.value
                         )
                       }
+                      rows="4"
+                    ></textarea>
+                    <span className="helper-text">
+                      These are the issues that have the most significant impact
+                      on your business and stakeholders
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <div className="form-field">
+                    <label>Last Assessment Date</label>
+                    <input
+                      type="date"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "lastAssessmentDate",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <div className="form-field error">
+                    <label>
+                      Stakeholders Involved <span className="required">*</span>
+                    </label>
+                    <select
+                      defaultValue=""
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "stakeholdersInvolved",
+                          e.target.value
+                        )
+                      }
+                      multiple
+                    >
+                      <option value="employees">Employees</option>
+                      <option value="customers">Customers</option>
+                      <option value="suppliers">Suppliers</option>
+                      <option value="investors">Investors</option>
+                      <option value="localCommunities">
+                        Local Communities
+                      </option>
+                      <option value="ngos">NGOs</option>
+                    </select>
+                    <div className="error-message">
+                      Please select at least one stakeholder group
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>Assessment Methodology Description</label>
+                    <textarea
+                      placeholder="Briefly describe how your organization conducted the materiality assessment..."
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "methodologyDescription",
+                          e.target.value
+                        )
+                      }
+                      rows="3"
                     ></textarea>
                   </div>
                 </div>
@@ -502,6 +463,14 @@ const CSRD = () => {
 
           {activeTab === "stakeholder" && (
             <div className="form-section">
+              <div className="section-header">
+                <h2>Stakeholder Engagement</h2>
+                <p className="section-description">
+                  Document how your organization engages with various
+                  stakeholders on sustainability matters.
+                </p>
+              </div>
+
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
@@ -552,6 +521,14 @@ const CSRD = () => {
 
           {activeTab === "governance" && (
             <div className="form-section">
+              <div className="section-header">
+                <h2>Governance & Oversight</h2>
+                <p className="section-description">
+                  Detail your organization&apos;s governance structure for
+                  sustainability issues.
+                </p>
+              </div>
+
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
@@ -578,6 +555,14 @@ const CSRD = () => {
 
           {activeTab === "target" && (
             <div className="form-section">
+              <div className="section-header">
+                <h2>Target & Actions</h2>
+                <p className="section-description">
+                  Set specific, measurable sustainability targets and track your
+                  progress.
+                </p>
+              </div>
+
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
@@ -604,6 +589,14 @@ const CSRD = () => {
 
           {activeTab === "data" && (
             <div className="form-section">
+              <div className="section-header">
+                <h2>Data & Reporting</h2>
+                <p className="section-description">
+                  Specify your reporting frameworks and data collection
+                  methodologies.
+                </p>
+              </div>
+
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
@@ -627,6 +620,9 @@ const CSRD = () => {
                       <option value="tcfd">TCFD</option>
                       <option value="csrd">CSRD</option>
                     </select>
+                    <span className="helper-text">
+                      The primary framework used for sustainability reporting
+                    </span>
                   </div>
                 </div>
               </div>
