@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BsThreeDotsVertical, BsCalendar } from "react-icons/bs";
 import { FaShoppingCart } from "react-icons/fa";
@@ -18,6 +19,7 @@ import {
   LineElement,
   Title,
 } from "chart.js";
+import { fetchDashboardData } from "../../firebase/dashboardService";
 import "./DashboardHome.css";
 import "../Dashboard/Dashboard.css";
 
@@ -35,6 +37,9 @@ ChartJS.register(
 
 const DashboardHome = () => {
   const { user } = useSelector((state) => state.auth);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB", {
     day: "numeric",
@@ -42,12 +47,37 @@ const DashboardHome = () => {
     year: "numeric",
   });
 
+  // Fetch dashboard data when component mounts
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      if (user?.uid) {
+        try {
+          setLoading(true);
+          const data = await fetchDashboardData(user.uid);
+          setDashboardData(data);
+        } catch (error) {
+          console.error("Error fetching dashboard data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadDashboardData();
+  }, [user]);
+
   // Data for the donut chart
   const donutData = {
     labels: ["Scope 3", "Scope 2", "Scope 1"],
     datasets: [
       {
-        data: [77, 15, 8],
+        data: dashboardData
+          ? [
+              dashboardData.chartData.emissionsByScope.scope3,
+              dashboardData.chartData.emissionsByScope.scope2,
+              dashboardData.chartData.emissionsByScope.scope1,
+            ]
+          : [77, 15, 8],
         backgroundColor: ["#e94c2b", "#e6a4a4", "#8d5c5c"],
         borderWidth: 0,
         cutout: "70%",
@@ -87,9 +117,12 @@ const DashboardHome = () => {
     datasets: [
       {
         label: "Emissions",
-        data: [
-          1200, 1000, 1400, 1100, 1300, 900, 1200, 800, 1100, 1000, 1200, 900,
-        ],
+        data: dashboardData
+          ? dashboardData.chartData.monthlyEmissions
+          : [
+              1200, 1000, 1400, 1100, 1300, 900, 1200, 800, 1100, 1000, 1200,
+              900,
+            ],
         borderColor: "#e94c2b",
         backgroundColor: "rgba(233, 76, 43, 0.1)",
         tension: 0.4,
@@ -122,6 +155,15 @@ const DashboardHome = () => {
     return user.displayName.split(" ")[0];
   };
 
+  if (loading) {
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading dashboard data...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-home-layout">
       <div className="dashboard-main">
@@ -144,35 +186,40 @@ const DashboardHome = () => {
               <FaShoppingCart className="stat-icon" />
             </div>
             <div className="stat-info">
-              <h2>2403</h2>
+              <h2>
+                {dashboardData?.stats.totalSales.toLocaleString() || "2,403"}
+              </h2>
               <p>Total Sales</p>
             </div>
             <div className="stat-change positive">
               <span>4.35% ↑</span>
             </div>
           </div>
-          <div className="stat-card sales-card">
+          <div className="stat-card emissions-card">
             <div className="stat-icon-container">
               <FaShoppingCart className="stat-icon" />
             </div>
             <div className="stat-info">
-              <h2>2403</h2>
-              <p>Total Sales</p>
+              <h2>
+                {dashboardData?.stats.totalEmissions.toLocaleString() ||
+                  "2,403"}
+              </h2>
+              <p>Total Emissions</p>
             </div>
-            <div className="stat-change positive">
-              <span>4.35% ↑</span>
+            <div className="stat-change negative">
+              <span>{dashboardData?.chartData.yearlyReduction || 7.25}% ↓</span>
             </div>
           </div>
-          <div className="stat-card sales-card">
+          <div className="stat-card compliance-card">
             <div className="stat-icon-container">
               <FaShoppingCart className="stat-icon" />
             </div>
             <div className="stat-info">
-              <h2>2403</h2>
-              <p>Total Sales</p>
+              <h2>{dashboardData?.stats.complianceScore || 82}%</h2>
+              <p>Compliance Score</p>
             </div>
             <div className="stat-change positive">
-              <span>4.35% ↑</span>
+              <span>2.15% ↑</span>
             </div>
           </div>
         </div>
@@ -182,7 +229,9 @@ const DashboardHome = () => {
             <div className="chart-container">
               <div className="donut-chart-wrapper">
                 <Doughnut data={donutData} options={donutOptions} />
-                <div className="donut-center">77%</div>
+                <div className="donut-center">
+                  {dashboardData?.chartData.emissionsByScope.scope3 || 77}%
+                </div>
               </div>
               <div className="scope-legend">
                 <h3>Emissions by Scope</h3>
@@ -217,19 +266,43 @@ const DashboardHome = () => {
               </button>
             </div>
           </div>
-
-          <div className="chart-card emissions-over-time">
+          <div className="chart-card emissions-trend">
             <div className="chart-header">
-              <div>
-                <h3>Emissions over the years</h3>
-                <div className="change-percentage">
-                  <span className="percentage-value">-2.145%</span>
-                  <span className="year">2025</span>
-                </div>
+              <h3>Emissions Trend</h3>
+              <div className="chart-actions">
+                <span className="chart-period">This Year</span>
+                <BsThreeDotsVertical className="chart-menu" />
               </div>
             </div>
             <div className="line-chart-container">
               <Line data={lineData} options={lineOptions} />
+            </div>
+            <div className="chart-footer">
+              <div className="chart-stat">
+                <span className="stat-label">Average</span>
+                <span className="stat-value">
+                  {dashboardData
+                    ? Math.round(
+                        dashboardData.chartData.monthlyEmissions.reduce(
+                          (a, b) => a + b,
+                          0
+                        ) / 12
+                      ).toLocaleString()
+                    : "1,100"}
+                </span>
+              </div>
+              <div className="chart-stat">
+                <span className="stat-label">YoY Change</span>
+                <span
+                  className={`stat-value ${
+                    dashboardData?.chartData.yearlyReduction > 0
+                      ? "negative"
+                      : "positive"
+                  }`}
+                >
+                  {dashboardData?.chartData.yearlyReduction || 5.25}%
+                </span>
+              </div>
             </div>
           </div>
         </div>

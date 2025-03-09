@@ -12,6 +12,7 @@ import {
 import { db } from "../../firebase/config";
 import { FiDownload, FiTrash2, FiSearch, FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { addReportToDashboard } from "../../firebase/dashboardService";
 import "./Reports.css";
 
 const Reports = () => {
@@ -131,18 +132,20 @@ const Reports = () => {
 
   // Delete report
   const handleDeleteReport = async (reportId) => {
-    if (window.confirm("Are you sure you want to delete this report?")) {
-      try {
-        await deleteDoc(doc(db, "csrdSubmissions", reportId));
-        setReports((prev) => prev.filter((report) => report.id !== reportId));
-        setFilteredReports((prev) =>
-          prev.filter((report) => report.id !== reportId)
-        );
-        toast.success("Report deleted successfully");
-      } catch (error) {
-        console.error("Error deleting report:", error);
-        toast.error("Failed to delete report");
-      }
+    if (!window.confirm("Are you sure you want to delete this report?")) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "csrdSubmissions", reportId));
+      setReports(reports.filter((report) => report.id !== reportId));
+      setFilteredReports(
+        filteredReports.filter((report) => report.id !== reportId)
+      );
+      toast.success("Report deleted successfully");
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      toast.error("Failed to delete report");
     }
   };
 

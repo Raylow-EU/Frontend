@@ -199,10 +199,47 @@
 .chart-footer {
   display: flex;
   justify-content: space-between;
+  padding: 1rem;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 1rem;
+}
+
+.chart-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.chart-actions {
+  display: flex;
   align-items: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #eee;
+  gap: 1rem;
+}
+
+.chart-period {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.chart-menu {
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.chart-menu:hover {
+  color: #333;
 }
 
 .mtco2-indicator {
@@ -545,4 +582,57 @@
   .news-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #666;
+}
+
+.dashboard-loading .loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(233, 76, 43, 0.2);
+  border-radius: 50%;
+  border-left-color: #e94c2b;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Additional styles for the different card types */
+.emissions-card .stat-icon-container {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.emissions-card .stat-icon {
+  color: #3498db;
+}
+
+.compliance-card .stat-icon-container {
+  background-color: rgba(46, 204, 113, 0.1);
+}
+
+.compliance-card .stat-icon {
+  color: #2ecc71;
+}
+
+.negative {
+  color: #2ecc71; /* Green for emission reductions (positive impact) */
+}
+
+.positive {
+  color: #e94c2b; /* Orange/red for increases */
 }

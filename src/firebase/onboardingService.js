@@ -1,5 +1,6 @@
 import { db } from "./config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { initializeDashboardData } from "./dashboardService";
 
 // Check if a user has completed onboarding
 export const checkOnboardingStatus = async (userId) => {
@@ -17,12 +18,19 @@ export const checkOnboardingStatus = async (userId) => {
 // Save onboarding information
 export const saveOnboardingData = async (userId, onboardingData) => {
   try {
+    // Save onboarding data
     const userOnboardingRef = doc(db, "userOnboarding", userId);
-    await setDoc(userOnboardingRef, {
+    const onboardingWithMeta = {
       ...onboardingData,
       completed: true,
       completedAt: new Date(),
-    });
+    };
+
+    await setDoc(userOnboardingRef, onboardingWithMeta);
+
+    // Initialize dashboard data with user's onboarding information
+    await initializeDashboardData(userId, onboardingWithMeta);
+
     return true;
   } catch (error) {
     console.error("Error saving onboarding data:", error);
