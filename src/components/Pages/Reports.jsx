@@ -213,7 +213,7 @@ const Reports = () => {
             <FiSearch className="search-icon" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search reports..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -224,12 +224,15 @@ const Reports = () => {
           className="add-report-btn"
           onClick={() => navigate("/dashboard/csrd")}
         >
-          <FiPlus /> Add Report
+          <FiPlus /> Create New Report
         </button>
       </div>
 
       {loading ? (
-        <div className="loading-spinner">Loading reports...</div>
+        <div className="loading-spinner">
+          <div className="spinner-animation"></div>
+          Loading reports...
+        </div>
       ) : (
         <>
           <div className="reports-table-container">
@@ -243,18 +246,24 @@ const Reports = () => {
                   <th>Last Accessed</th>
                   <th>Reporting Year</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length > 0 ? (
                   currentEntries.map((report) => (
                     <tr key={report.id}>
-                      <td>{report.id.substring(0, 7)}</td>
                       <td>
-                        CSRD{" "}
-                        {report.formData?.materiality?.requiredSelect ||
-                          "Report"}
+                        <span className="report-id">
+                          {report.id.substring(0, 7)}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="file-name">
+                          CSRD{" "}
+                          {report.formData?.materiality?.assessmentMethod ||
+                            "Report"}
+                        </div>
                       </td>
                       <td>{report.userName}</td>
                       <td>{formatDate(report.date)}</td>
@@ -280,7 +289,7 @@ const Reports = () => {
                         <button
                           className="delete-btn"
                           onClick={() => handleDeleteReport(report.id)}
-                          title="Delete report"
+                          title="Delete Report"
                         >
                           <FiTrash2 />
                         </button>
@@ -290,7 +299,13 @@ const Reports = () => {
                 ) : (
                   <tr>
                     <td colSpan="8" className="no-reports">
-                      No reports found. Create your first CSRD report!
+                      <div className="empty-state">
+                        <p>No reports found</p>
+                        <p className="empty-state-action">
+                          Create your first CSRD report by clicking the &quot;
+                          Create New Report&quot; button above
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 )}
