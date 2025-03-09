@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { saveOnboardingData } from "../../firebase/onboardingService";
 import "./Onboarding.css";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const Onboarding = () => {
   const steps = [
     {
       title: "Welcome to Raylow",
+      description:
+        "Let's set up your account in just a few simple steps. First, tell us about your company.",
       fields: [
         {
           name: "companyName",
@@ -33,6 +36,7 @@ const Onboarding = () => {
     },
     {
       title: "Tell us about your company",
+      description: "This information helps us personalize your experience.",
       fields: [
         {
           name: "companySize",
@@ -53,12 +57,13 @@ const Onboarding = () => {
           label: "Industry",
           type: "select",
           options: [
-            { value: "", label: "Select industry" },
+            { value: "", label: "Select your industry" },
             { value: "technology", label: "Technology" },
             { value: "manufacturing", label: "Manufacturing" },
             { value: "retail", label: "Retail" },
             { value: "healthcare", label: "Healthcare" },
             { value: "finance", label: "Finance" },
+            { value: "energy", label: "Energy" },
             { value: "education", label: "Education" },
             { value: "other", label: "Other" },
           ],
@@ -68,56 +73,73 @@ const Onboarding = () => {
     },
     {
       title: "Sustainability Goals",
+      description:
+        "Select the areas you're focusing on for sustainability reporting.",
       fields: [
         {
           name: "sustainability_goals",
-          label: "What are your sustainability reporting goals?",
+          label:
+            "Which sustainability goals are most important to your organization?",
           type: "checkbox",
           options: [
-            { value: "csrd_compliance", label: "CSRD Compliance" },
             { value: "carbon_reduction", label: "Carbon Reduction" },
-            {
-              value: "sustainability_strategy",
-              label: "Sustainability Strategy",
-            },
-            { value: "stakeholder_reporting", label: "Stakeholder Reporting" },
-            { value: "supply_chain", label: "Supply Chain Assessment" },
+            { value: "waste_management", label: "Waste Management" },
+            { value: "water_conservation", label: "Water Conservation" },
+            { value: "social_responsibility", label: "Social Responsibility" },
+            { value: "supply_chain", label: "Sustainable Supply Chain" },
           ],
+          required: true,
         },
+      ],
+    },
+    {
+      title: "Previous Reporting Experience",
+      description:
+        "Let us know about your reporting history to better tailor our service.",
+      fields: [
         {
           name: "previous_reporting",
-          label: "Have you done sustainability reporting before?",
+          label: "Have you published sustainability reports before?",
           type: "radio",
           options: [
             { value: true, label: "Yes" },
             { value: false, label: "No" },
           ],
+          required: true,
         },
       ],
     },
   ];
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, type, value, checked } = e.target;
 
+    // Handle checkbox groups (multi-select)
     if (type === "checkbox") {
-      // Handle checkboxes (multiple selection)
       if (checked) {
+        // Add to array if checked
         setFormData({
           ...formData,
           [name]: [...(formData[name] || []), value],
         });
       } else {
+        // Remove from array if unchecked
         setFormData({
           ...formData,
           [name]: formData[name].filter((item) => item !== value),
         });
       }
+    } else if (type === "radio") {
+      // Handle radio buttons - convert string "true"/"false" to actual boolean values
+      setFormData({
+        ...formData,
+        [name]: value === "true",
+      });
     } else {
       // Handle other input types
       setFormData({
         ...formData,
-        [name]: type === "radio" ? value === "true" : value,
+        [name]: value,
       });
     }
   };
@@ -133,7 +155,8 @@ const Onboarding = () => {
       if (Array.isArray(formData[field.name])) {
         return formData[field.name].length > 0;
       }
-      return !!formData[field.name];
+      // For boolean values (like radio buttons with false value), we need a special check
+      return formData[field.name] !== undefined && formData[field.name] !== "";
     });
 
     if (!isValid) {
@@ -143,6 +166,7 @@ const Onboarding = () => {
 
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     } else {
       handleSubmit();
     }
@@ -151,6 +175,7 @@ const Onboarding = () => {
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -166,7 +191,17 @@ const Onboarding = () => {
       navigate("/dashboard");
     } catch (error) {
       console.error("Error saving onboarding data:", error);
-      alert("There was an error saving your information. Please try again.");
+
+      // Better error messaging based on error type
+      if (error.code === "permission-denied") {
+        alert(
+          "You don't have permission to complete onboarding. This might be due to Firestore security rules. Please contact your administrator."
+        );
+      } else {
+        alert(
+          "There was an error saving your information. Please try again or contact support if the issue persists."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -231,9 +266,10 @@ const Onboarding = () => {
                 <input
                   type="radio"
                   name={field.name}
-                  value={option.value.toString()}
+                  value={option.value}
                   checked={formData[field.name] === option.value}
                   onChange={handleInputChange}
+                  required={field.required}
                 />
                 {option.label}
               </label>
@@ -251,20 +287,29 @@ const Onboarding = () => {
     <div className="onboarding-container">
       <div className="onboarding-card">
         <div className="onboarding-progress">
-          {steps.map((_, index) => (
+          {steps.map((step, index) => (
             <div
               key={index}
               className={`progress-step ${
-                index <= currentStep ? "active" : ""
-              }`}
+                index === currentStep ? "active" : ""
+              } ${index < currentStep ? "completed" : ""}`}
               onClick={() => index < currentStep && setCurrentStep(index)}
+              data-title={steps[index].title}
             >
-              {index + 1}
+              {index < currentStep ? (
+                <BsCheckCircleFill size={16} />
+              ) : (
+                index + 1
+              )}
             </div>
           ))}
         </div>
 
         <h1>{currentStepData.title}</h1>
+        {currentStepData.description && (
+          <p className="step-description">{currentStepData.description}</p>
+        )}
+
         <div className="onboarding-form">
           {currentStepData.fields.map((field) => (
             <div key={field.name} className="form-group">
@@ -285,7 +330,11 @@ const Onboarding = () => {
             </button>
           )}
           <button className="next-btn" onClick={handleNext} disabled={loading}>
-            {currentStep === steps.length - 1 ? "Complete" : "Next"}
+            {loading
+              ? "Processing..."
+              : currentStep === steps.length - 1
+              ? "Complete Setup"
+              : "Continue"}
           </button>
         </div>
       </div>

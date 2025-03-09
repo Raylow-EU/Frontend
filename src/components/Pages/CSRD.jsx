@@ -12,6 +12,7 @@ import {
   getChatSession,
   addMessageToChatSession,
   updateChatSessionTitle,
+  deleteChatSession,
 } from "../../firebase/chatService";
 
 const CSRD = () => {
@@ -44,14 +45,98 @@ const CSRD = () => {
 
   // Add state to track backend availability
   const [backendStatus, setBackendStatus] = useState("unknown"); // "online", "offline", "unknown"
+  const [isTempSession, setIsTempSession] = useState(false); // Track if this is a temporary session
 
   // Load chat sessions when the user opens the chat widget
   useEffect(() => {
     if (chatWidgetOpen && user?.uid && !currentSessionId) {
-      // Create a new session by default when opening the chat
-      startNewChatSession();
+      // Create a temporary session when opening the chat
+      startNewChatSession(true); // Pass true to indicate this is a temporary session
     }
   }, [chatWidgetOpen, user]);
+
+  // Handle component unmount with empty chat
+  useEffect(() => {
+    // Setup a cleanup function that runs when the component unmounts or dependencies change
+    return () => {
+      // Check if there's a current temporary session that's empty
+      if (
+        currentSessionId &&
+        isTempSession &&
+        messages.length === 0 &&
+        user?.uid
+      ) {
+        // Only attempt to delete if the user is logged in
+        // Instead of deleting directly, which might fail due to permissions on unmount,
+        // just mark for future deletion
+        try {
+          localStorage.setItem("pendingEmptySessionDelete", currentSessionId);
+          console.debug(
+            `Marked empty session for deletion: ${currentSessionId}`
+          );
+        } catch (e) {
+          console.debug("Error marking empty chat session for deletion", e);
+        }
+      }
+    };
+  }, [currentSessionId, isTempSession, messages.length, user?.uid]);
+
+  // Additionally handle page unload events for more reliability
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // If there's a current temporary session that's empty
+      if (currentSessionId && isTempSession && messages.length === 0) {
+        // Try to delete it when the page unloads
+        // Note: For beforeunload, we can't reliably perform async operations
+        // This is a best-effort attempt to mark the session for deletion
+        try {
+          // Store the session ID that should be deleted in localStorage
+          localStorage.setItem("pendingEmptySessionDelete", currentSessionId);
+        } catch (e) {
+          console.debug(
+            "Error marking empty chat session for deletion on page unload",
+            e
+          );
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [currentSessionId, isTempSession, messages.length]);
+
+  // Check for and clean up any pending session deletions from previous page unloads
+  useEffect(() => {
+    const checkPendingDeletions = async () => {
+      if (!user?.uid) return;
+
+      const pendingSessionId = localStorage.getItem(
+        "pendingEmptySessionDelete"
+      );
+      if (pendingSessionId) {
+        try {
+          // Delete the session that was marked for deletion
+          await deleteChatSession(pendingSessionId);
+          console.debug(
+            `Deleted pending empty chat session: ${pendingSessionId}`
+          );
+        } catch (error) {
+          console.error("Error deleting pending empty chat session:", error);
+        } finally {
+          // Clear the pending deletion
+          localStorage.removeItem("pendingEmptySessionDelete");
+        }
+      }
+    };
+
+    // Run the check when the component mounts
+    if (user?.uid) {
+      checkPendingDeletions();
+    }
+  }, [user?.uid]);
 
   // Load chat sessions from Firestore
   const loadChatSessions = async () => {
@@ -70,7 +155,20 @@ const CSRD = () => {
   };
 
   // Start a new chat session
-  const startNewChatSession = async () => {
+  const startNewChatSession = async (isTemporary = false) => {
+    // Check if current session is empty and temporary before starting a new one
+    if (currentSessionId && isTempSession && messages.length === 0) {
+      try {
+        // Try to delete the current empty session before creating a new one
+        await deleteEmptySession(currentSessionId);
+      } catch {
+        // If deletion fails, just log it and continue - we'll still create a new session
+        console.debug(
+          "Could not delete previous empty session, continuing with new session creation"
+        );
+      }
+    }
+
     if (!user?.uid) return;
 
     try {
@@ -78,8 +176,12 @@ const CSRD = () => {
       const newSession = await createChatSession(user.uid);
       setCurrentSessionId(newSession.id);
       setMessages([]);
-      // Add the new session to the list
-      setChatSessions((prev) => [newSession, ...prev]);
+      setIsTempSession(isTemporary); // Track if this is a temporary session
+
+      // Add the new session to the list if it's not temporary
+      if (!isTemporary) {
+        setChatSessions((prev) => [newSession, ...prev]);
+      }
     } catch (error) {
       console.error("Error creating new chat session:", error);
       toast.error("Failed to start new chat");
@@ -91,7 +193,28 @@ const CSRD = () => {
   // Load a specific chat session
   const loadChatSession = async (sessionId) => {
     try {
+      // Check if current session is empty and temporary before loading a new one
+      if (
+        currentSessionId &&
+        isTempSession &&
+        messages.length === 0 &&
+        currentSessionId !== sessionId
+      ) {
+        try {
+          // Delete the current empty temporary session before loading a different one
+          await deleteEmptySession(currentSessionId);
+        } catch {
+          // If deletion fails, just log it and continue with loading the requested session
+          console.debug(
+            "Could not delete previous empty session, continuing with loading requested session"
+          );
+        }
+      }
+
       setLoading(true);
+      // Reset temporary status when loading an existing session
+      setIsTempSession(false);
+
       const session = await getChatSession(sessionId);
       setCurrentSessionId(session.id);
 
@@ -125,10 +248,76 @@ const CSRD = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Delete an empty chat session
+  const deleteEmptySession = async (sessionId) => {
+    if (!sessionId || !user?.uid) return;
+
+    try {
+      // Check if we have the permission to delete this session
+      // Session must belong to the current user
+      const chatSessions = await getUserChatSessions(user.uid);
+      const sessionExists = chatSessions.some(
+        (session) => session.id === sessionId
+      );
+
+      if (!sessionExists) {
+        console.debug(
+          `Session ${sessionId} not found or not owned by current user, skipping deletion`
+        );
+        return;
+      }
+
+      await deleteChatSession(sessionId);
+
+      // Also remove it from the local state if it's in the list
+      setChatSessions((prev) =>
+        prev.filter((session) => session.id !== sessionId)
+      );
+
+      // Clear from localStorage if it was pending deletion
+      if (localStorage.getItem("pendingEmptySessionDelete") === sessionId) {
+        localStorage.removeItem("pendingEmptySessionDelete");
+      }
+
+      console.debug(`Deleted empty chat session: ${sessionId}`);
+    } catch (error) {
+      console.error("Error deleting empty chat session:", error);
+
+      // For permission errors, just remove from local state
+      if (
+        error.message &&
+        (error.message.includes("permission") ||
+          error.message.includes("insufficient") ||
+          error.message.includes("unauthorized"))
+      ) {
+        console.debug(
+          "Permission error, removing session from local state only"
+        );
+
+        // Remove from local state anyway
+        setChatSessions((prev) =>
+          prev.filter((session) => session.id !== sessionId)
+        );
+
+        // Clear from localStorage if it was pending deletion
+        if (localStorage.getItem("pendingEmptySessionDelete") === sessionId) {
+          localStorage.removeItem("pendingEmptySessionDelete");
+        }
+      }
+      // Don't show a toast for this error as it's not critical to the user experience
+    }
+  };
+
   // Close chat widget with animation
   const handleCloseChat = () => {
     setIsClosing(true);
     setIsAnimating(true);
+
+    // Check if we should delete the current session
+    if (currentSessionId && isTempSession && messages.length === 0) {
+      // Delete empty temporary session before closing
+      deleteEmptySession(currentSessionId);
+    }
 
     // Use a slightly longer timeout than the animation duration
     setTimeout(() => {
@@ -136,6 +325,7 @@ const CSRD = () => {
       setIsClosing(false);
       setCurrentSessionId(null);
       setMessages([]);
+      setIsTempSession(false); // Reset the temp session flag
 
       // Add a small delay before allowing button to appear
       setTimeout(() => {
@@ -171,6 +361,26 @@ const CSRD = () => {
       if (!currentSessionId) {
         toast.error("Couldn't create a chat session");
         return;
+      }
+    } else if (isTempSession) {
+      // If this is the first message in a temporary session, make it permanent
+      setIsTempSession(false);
+      // Add to the chat sessions list now that it's no longer temporary
+      const currentSession = chatSessions.find(
+        (s) => s.id === currentSessionId
+      );
+      if (!currentSession) {
+        // Only add to the list if it's not already there
+        const newSessionObj = {
+          id: currentSessionId,
+          title: `Chat ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString(
+            [],
+            { hour: "2-digit", minute: "2-digit" }
+          )}`,
+          createdAt: new Date(),
+          userId: user.uid,
+        };
+        setChatSessions((prev) => [newSessionObj, ...prev]);
       }
     }
 
