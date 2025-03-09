@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import LandingPage from "./components/LandingPage/LandingPage";
 import Login from "./components/Authentication/Login";
-import Signup from "./components/Authentication/SignUp";
+import Signup from "./components/Authentication/Signup";
 import Dashboard from "./components/Dashboard/Dashboard";
 import DashboardHome from "./components/Pages/DashboardHome";
 import CSRD from "./components/Pages/CSRD";
