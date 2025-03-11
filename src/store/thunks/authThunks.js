@@ -4,15 +4,31 @@ import {
   loginWithEmailAndPassword,
   loginWithGoogle,
   logoutUser,
+  fetchUserData,
 } from "../../firebase/auth";
 import { setUser, setLoading, setError, logout } from "../slices/authSlice";
 
 // Helper to extract serializable user data
-const extractUserData = (user) => ({
-  uid: user.uid,
-  email: user.email,
-  displayName: user.displayName || "",
-});
+const extractUserData = async (user) => {
+  const baseData = {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName || "",
+  };
+
+  // Fetch additional user data from Firestore
+  try {
+    const userData = await fetchUserData(user.uid);
+    return {
+      ...baseData,
+      isAdmin: userData?.isAdmin || false,
+      onboardingCompleted: userData?.onboardingCompleted || false,
+    };
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return baseData;
+  }
+};
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -24,7 +40,7 @@ export const registerUser = createAsyncThunk(
         password,
         fullName
       );
-      const userData = extractUserData(userCredential);
+      const userData = await extractUserData(userCredential);
       dispatch(setUser(userData));
       return userData;
     } catch (error) {
@@ -40,7 +56,7 @@ export const loginUser = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const userCredential = await loginWithEmailAndPassword(email, password);
-      const userData = extractUserData(userCredential);
+      const userData = await extractUserData(userCredential);
       dispatch(setUser(userData));
       return userData;
     } catch (error) {
@@ -56,7 +72,7 @@ export const signInWithGoogle = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const userCredential = await loginWithGoogle();
-      const userData = extractUserData(userCredential);
+      const userData = await extractUserData(userCredential);
       dispatch(setUser(userData));
       return userData;
     } catch (error) {
