@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { setUser, setLoading } from "../../store/slices/authSlice";
+import { fetchUserData } from "../../firebase/auth";
 
 const AuthStateListener = ({ children }) => {
   const dispatch = useDispatch();
@@ -11,18 +12,35 @@ const AuthStateListener = ({ children }) => {
     console.log("Setting up auth state listener");
     dispatch(setLoading(true));
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       console.log("Auth state changed", user ? "User exists" : "No user");
 
       if (user) {
-        // Extract only serializable properties from the user object
-        const serializableUser = {
+        // Extract basic serializable properties from the user object
+        const baseUserData = {
           uid: user.uid,
           email: user.email,
           displayName: user.displayName || "",
         };
-        console.log("Setting user in Redux:", serializableUser);
-        dispatch(setUser(serializableUser));
+
+        try {
+          // Fetch additional user data from Firestore
+          const userData = await fetchUserData(user.uid);
+
+          // Combine base user data with Firestore data
+          const completeUserData = {
+            ...baseUserData,
+            isAdmin: userData?.isAdmin || false,
+            onboardingCompleted: userData?.onboardingCompleted || false,
+          };
+
+          console.log("Setting complete user data in Redux:", completeUserData);
+          dispatch(setUser(completeUserData));
+        } catch (error) {
+          console.error("Error fetching extended user data:", error);
+          console.log("Setting basic user data in Redux:", baseUserData);
+          dispatch(setUser(baseUserData));
+        }
       } else {
         console.log("No user found, setting null");
         dispatch(setUser(null));
