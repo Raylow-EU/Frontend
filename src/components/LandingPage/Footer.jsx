@@ -1,107 +1,142 @@
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  ArrowRight,
+} from "lucide-react";
 import "./Footer.css";
-import logo from "../../assets/logo.png"; // Make sure to add your logo
+import logo from "../../assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-main">
+    <footer className="site-footer">
+      <div className="footer-background">
+        <div className="footer-dots"></div>
+        <div className="footer-gradient"></div>
+      </div>
+
+      <div className="footer-container">
+        <div className="footer-top">
           <div className="footer-brand">
             <div className="footer-logo">
-              <img src={logo} alt="Raylow Logo" />
-              <span>Raylow</span>
+              <img
+                src={logo || "/placeholder.svg?height=40&width=40"}
+                alt="Raylow Logo"
+              />
+              <span>RAYLOW</span>
             </div>
-            <p>Best CSRD reporting solution for SMEs</p>
-            <div className="social-links">
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fab fa-twitter"></i>
+            <p>
+              Simplifying CSRD compliance with AI-powered sustainability
+              reporting solutions. Save time, ensure compliance, and make a
+              positive impact.
+            </p>
+            <div className="footer-social">
+              <a href="#" aria-label="Facebook">
+                <Facebook size={20} />
               </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fab fa-youtube"></i>
+              <a href="#" aria-label="Twitter">
+                <Twitter size={20} />
               </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fab fa-facebook"></i>
+              <a href="#" aria-label="LinkedIn">
+                <Linkedin size={20} />
+              </a>
+              <a href="#" aria-label="Instagram">
+                <Instagram size={20} />
               </a>
             </div>
           </div>
 
           <div className="footer-links">
-            <div className="footer-column">
+            <div className="footer-links-column">
               <h3>Product</h3>
               <ul>
                 <li>
-                  <a href="#features">Features</a>
+                  <a href="#">Features</a>
                 </li>
                 <li>
-                  <a href="#pricing">Pricing</a>
+                  <a href="#">Pricing</a>
                 </li>
                 <li>
-                  <a href="#integrations">Integrations</a>
+                  <a href="#">Case Studies</a>
                 </li>
                 <li>
-                  <a href="#changelog">Changelog</a>
+                  <a href="#">Reviews</a>
+                </li>
+                <li>
+                  <a href="#">Updates</a>
                 </li>
               </ul>
             </div>
 
-            <div className="footer-column">
-              <h3>Resources</h3>
-              <ul>
-                <li>
-                  <a href="#api-docs">API Docs</a>
-                </li>
-                <li>
-                  <a href="#blogs">Blogs</a>
-                </li>
-                <li>
-                  <a href="#blog-post">Blog Post</a>
-                </li>
-                <li>
-                  <a href="#faqs">FAQs</a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="footer-column">
+            <div className="footer-links-column">
               <h3>Company</h3>
               <ul>
                 <li>
-                  <a href="#about">About</a>
+                  <a href="#">About Us</a>
                 </li>
                 <li>
-                  <a href="#careers">Careers</a>
+                  <a href="#">Careers</a>
                 </li>
                 <li>
-                  <a href="#contact">Contact</a>
+                  <a href="#">Press</a>
                 </li>
                 <li>
-                  <a href="#webinars">Webinars</a>
+                  <a href="#">Partners</a>
+                </li>
+                <li>
+                  <a href="#">Contact</a>
                 </li>
               </ul>
+            </div>
+
+            <div className="footer-links-column">
+              <h3>Resources</h3>
+              <ul>
+                <li>
+                  <a href="#">Blog</a>
+                </li>
+                <li>
+                  <a href="#">CSRD Guide</a>
+                </li>
+                <li>
+                  <a href="#">Webinars</a>
+                </li>
+                <li>
+                  <a href="#">Documentation</a>
+                </li>
+                <li>
+                  <a href="#">Support</a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="footer-newsletter">
+              <h3>Stay Updated</h3>
+              <p>
+                Subscribe to our newsletter for the latest CSRD updates and
+                product news.
+              </p>
+              <div className="newsletter-form">
+                <input type="email" placeholder="Your email address" />
+                <button type="submit" aria-label="Subscribe">
+                  <ArrowRight size={20} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>Copyright © {currentYear} LLC. All rights reserved</p>
-          <div className="legal-links">
-            <a href="#terms">Terms</a>
-            <a href="#privacy">Privacy</a>
-            <a href="#cookies">Cookie Policy</a>
+          <div className="footer-legal">
+            <span>&copy; {currentYear} Raylow. All rights reserved.</span>
+            <div className="footer-legal-links">
+              <a href="#">Terms of Service</a>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Cookie Policy</a>
+            </div>
           </div>
         </div>
       </div>

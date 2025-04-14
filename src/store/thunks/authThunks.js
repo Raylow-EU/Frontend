@@ -32,13 +32,17 @@ const extractUserData = async (user) => {
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async ({ email, password, fullName }, { dispatch }) => {
+  async (
+    { email, password, fullName, companyName, skipOnboarding },
+    { dispatch }
+  ) => {
     try {
       dispatch(setLoading(true));
       const userCredential = await registerWithEmailAndPassword(
         email,
         password,
-        fullName
+        fullName,
+        skipOnboarding ? { companyName } : null
       );
       const userData = await extractUserData(userCredential);
       dispatch(setUser(userData));

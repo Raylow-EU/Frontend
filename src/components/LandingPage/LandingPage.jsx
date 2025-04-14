@@ -2,11 +2,11 @@
 
 import Navbar from "./Navbar";
 import Hero from "./Hero";
-import TrustedBy from "./TrustedBy";
+// import TrustedBy from "./TrustedBy";
 import HowItWorks from "./HowItWorks";
 import Features from "./Features";
-import Testimonial from "./Testimonial";
-import MoreFeatures from "./MoreFeatures";
+// import Testimonial from "./Testimonial";
+// import MoreFeatures from "./MoreFeatures";
 import FAQ from "./FAQ";
 import Footer from "./Footer";
 
@@ -15,11 +15,11 @@ export default function LandingPage() {
     <div>
       <Navbar />
       <Hero />
-      <TrustedBy />
+      {/* <TrustedBy /> */}
       <HowItWorks />
       <Features />
-      <Testimonial />
-      <MoreFeatures />
+      {/* <Testimonial /> */}
+      {/* <MoreFeatures /> */}
       <FAQ />
       <Footer />
     </div>

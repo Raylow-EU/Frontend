@@ -16,6 +16,8 @@ import CSRD from "./components/Pages/CSRD";
 import Reports from "./components/Pages/Reports";
 import Team from "./components/Pages/Team";
 import Settings from "./components/Pages/Settings";
+import AcceptInvite from "./components/Pages/AcceptInvite";
+import InvitePage from "./components/Pages/InvitePage";
 import Navbar from "./components/LandingPage/Navbar";
 import Onboarding from "./components/Onboarding/Onboarding";
 import { checkOnboardingStatus } from "./firebase/onboardingService";
@@ -125,6 +127,24 @@ const App = () => {
           }
         />
         <Route
+          path="/accept-invite/:inviteId"
+          element={
+            <>
+              <Navbar />
+              <AcceptInvite />
+            </>
+          }
+        />
+        <Route
+          path="/invite/:inviteId"
+          element={
+            <>
+              <Navbar />
+              <InvitePage />
+            </>
+          }
+        />
+        <Route
           path="/dashboard"
           element={
             <PrivateRoute>
@@ -146,3 +166,6 @@ const App = () => {
 };
 
 export default App;
+
+// Add high contrast mode to the app
+// W3C validator - Once it's deployed test it  - internal testing

@@ -1,11 +1,33 @@
 .landing-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.navbar-scrolled {
+  padding: 0.5rem 2rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(234, 234, 234, 0.8);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.landing-navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 2rem;
-  /* background-color: white; */
-  border-bottom: 1px solid #eaeaea;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .landing-navbar-logo {
@@ -23,14 +45,40 @@
   color: inherit;
 }
 
+.landing-logo-img {
+  height: 28px;
+  width: 28px;
+  transition: transform 0.3s ease;
+}
+
+.landing-navbar-logo:hover .landing-logo-img {
+  transform: scale(1.05);
+}
+
+.landing-logo {
+  color: #333;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Desktop Navigation */
+.landing-navbar-desktop {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
 .landing-navbar-links {
   display: flex;
   gap: 2rem;
 }
 
 .landing-navbar-links a {
+  position: relative;
   text-decoration: none;
   color: #333;
+  font-weight: 500;
+  padding: 0.25rem 0;
   transition: color 0.2s ease;
 }
 
@@ -38,9 +86,31 @@
   color: #f85a2b;
 }
 
+.landing-navbar-links a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #f85a2b;
+  transition: width 0.3s ease;
+}
+
+.landing-navbar-links a:hover::after,
+.landing-navbar-links a.active-link::after {
+  width: 100%;
+}
+
+.landing-navbar-links a.active-link {
+  color: #f85a2b;
+  font-weight: 600;
+}
+
 .landing-navbar-auth {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .landing-navbar-auth a {
@@ -49,27 +119,106 @@
 }
 
 .landing-login-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  background: none;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid rgba(224, 224, 224, 0.5);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  color: #333;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.landing-login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: #d0d0d0;
 }
 
 .landing-signup-btn {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   background-color: #f85a2b;
   color: white;
   border: none;
   border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(248, 90, 43, 0.2);
+}
+
+.landing-signup-btn:hover {
+  background-color: #e64d1f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(248, 90, 43, 0.3);
+}
+
+/* Mobile Menu Button */
+.landing-mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #333;
   cursor: pointer;
 }
 
-.landing-logo-img {
-  height: 25px;
-  width: 25px;
+/* Mobile Navigation */
+.landing-mobile-menu {
+  display: none;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
 }
 
-.landing-logo {
+.landing-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+}
+
+.landing-mobile-links a {
+  text-decoration: none;
   color: #333;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.landing-mobile-links a:hover,
+.landing-mobile-links a.active-link {
+  color: #f85a2b;
+}
+
+.landing-mobile-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .landing-navbar-desktop {
+    display: none;
+  }
+
+  .landing-mobile-menu-btn {
+    display: block;
+  }
+
+  .landing-mobile-menu {
+    display: block;
+  }
+
+  .landing-mobile-menu.menu-open {
+    height: auto;
+    border-top: 1px solid #eaeaea;
+    margin-top: 0.75rem;
+  }
+
+  .landing-navbar {
+    padding: 0.75rem 1.5rem;
+  }
 }

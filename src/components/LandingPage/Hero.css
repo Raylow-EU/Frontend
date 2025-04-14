@@ -1,10 +1,62 @@
 .hero {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 7rem 2rem 6rem; /* Increased top padding to account for fixed navbar */
   text-align: center;
   min-height: 150vh; /* Give room for scrolling */
   position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.hero-loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-background {
+  position: absolute;
+  top: -100px; /* Extend upward to go under the navbar */
+  left: 0;
+  width: 100%;
+  height: calc(100% + 100px);
+  z-index: -1;
+  overflow: hidden;
+}
+
+.hero-gradient {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(248, 90, 43, 0.05) 0%,
+    rgba(248, 90, 43, 0.02) 25%,
+    rgba(248, 90, 43, 0) 70%
+  );
+  z-index: -1;
+}
+
+.hero-dots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.hero-content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 3rem;
 }
 
 .hero-content {
@@ -13,9 +65,30 @@
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+.hero-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: rgba(248, 90, 43, 0.1);
+  border-radius: 50px;
+  color: #f85a2b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-badge span {
+  background-color: #f85a2b;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 50px;
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
 .dashboard-container {
   position: sticky;
-  top: 50px; /* Adjust this value to control where the image stops */
+  top: 80px; /* Adjust this value to control where the image stops */
   width: 100%;
   height: 80vh;
   display: flex;
@@ -25,56 +98,228 @@
 }
 
 .dashboard-wrapper {
-  margin-top: -100px;
+  margin-top: -50px;
   width: 90%;
-  max-width: 1000px;
+  max-width: 1100px;
   transform-origin: center bottom;
   transform: perspective(1000px) rotateX(25deg); /* Initial tilt */
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.dashboard-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 80%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
 }
 
 .dashboard-image {
   width: 100%;
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  display: block;
+  transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .hero h1 {
   font-family: "Aeonik", "Inter", sans-serif;
-  font-size: 2rem;
-  margin-top: 1.5rem;
+  font-size: 3.5rem;
+  margin-top: 1rem;
   margin-bottom: 1.5rem;
-  line-height: 1.2;
+  line-height: 1.1;
+  font-weight: 800;
+  background: linear-gradient(to right, #333 0%, #555 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.hero h1 .highlight {
+  color: #f85a2b;
+  -webkit-text-fill-color: #f85a2b;
+  text-fill-color: #f85a2b;
+}
+
+.hero h1 .subtitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: linear-gradient(to right, #555 0%, #777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
 
 .hero p {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 2rem;
+  font-size: 1.125rem;
+  color: #555;
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
 }
 
 .get-started-btn {
   background-color: #f85a2b;
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.875rem 1.75rem;
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(248, 90, 43, 0.25);
 }
 
 .get-started-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(248, 90, 43, 0.3);
+  background-color: #e64d1f;
+}
+
+.watch-demo-btn {
+  background-color: white;
+  color: #333;
+  padding: 0.875rem 1.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.watch-demo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f85a2b;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .hero h1 .subtitle {
+    font-size: 2rem;
+  }
+
+  .dashboard-wrapper {
+    width: 95%;
+  }
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 1rem 1.5rem 4rem;
+  }
+
   .hero h1 {
     font-size: 2.5rem;
   }
 
+  .hero h1 .subtitle {
+    font-size: 1.75rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .get-started-btn,
+  .watch-demo-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .dashboard-container {
+    height: 60vh;
+  }
+
   .dashboard-wrapper {
     width: 100%;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero h1 .subtitle {
+    font-size: 1.5rem;
+  }
+
+  .hero-badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
   }
 }

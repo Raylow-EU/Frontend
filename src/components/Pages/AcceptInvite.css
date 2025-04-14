@@ -1,0 +1,113 @@
+.accept-invite-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f4f4f5;
+}
+
+.invite-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.invite-card h2 {
+  color: #18181b;
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+.company-details {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.company-details p {
+  margin: 0.5rem 0;
+  color: #52525b;
+}
+
+.company-details strong {
+  color: #18181b;
+}
+
+.accept-button {
+  background-color: #f85a2b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.accept-button:hover {
+  background-color: #e64d1f;
+  transform: translateY(-1px);
+}
+
+.accept-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(248, 90, 43, 0.1);
+  border-radius: 50%;
+  border-left-color: #f85a2b;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  text-align: center;
+  color: #52525b;
+}
+
+.error-message h2 {
+  color: #18181b;
+  margin-bottom: 1rem;
+}
+
+.primary-button {
+  background-color: #f85a2b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 1.5rem;
+}
+
+.primary-button:hover {
+  background-color: #e64d1f;
+  transform: translateY(-1px);
+}
