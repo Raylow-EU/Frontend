@@ -490,7 +490,7 @@ const CSRD = () => {
           );
 
           setLoading(false);
-        }, 30000); // 30 seconds timeout
+        }, 60000); // 60 seconds timeout
       };
 
       // Set initial timeout
@@ -498,10 +498,15 @@ const CSRD = () => {
 
       // Handle incoming message chunks
       eventSource.onmessage = (event) => {
-        // Reset timeout on each message
-        setupTimeout();
-
+        console.log("Received chunk:", event.data);
         const chunk = event.data;
+        if (chunk === "__END__") {
+          eventSource.close();
+          setLoading(false);
+          // Save the full assistantResponse here
+          saveAssistantMessage(assistantResponse);
+          return;
+        }
         assistantResponse += chunk;
 
         // Update the assistant message with the new chunk
@@ -868,126 +873,21 @@ const CSRD = () => {
               <div className="section-header">
                 <h2>Materiality Assessment</h2>
                 <p className="section-description">
-                  Identify and prioritize the sustainability issues that are
-                  most significant to your organization and stakeholders.
+                  Double Materiality: impacts on people & planet, and financial
+                  impacts on your company.
                 </p>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="form-label-group">
-                    <label>Assessment Details</label>
-                    <div className="form-field">
-                      <label>
-                        Assessment Method <span className="required">*</span>
-                      </label>
-                      <select
-                        defaultValue=""
-                        onChange={(e) =>
-                          handleFormChange(
-                            "materiality",
-                            "assessmentMethod",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="" disabled>
-                          Select assessment method
-                        </option>
-                        <option value="doubleMaterilaity">
-                          Double Materiality
-                        </option>
-                        <option value="stakeholderEngagement">
-                          Stakeholder Engagement
-                        </option>
-                        <option value="impactAssessment">
-                          Impact Assessment
-                        </option>
-                      </select>
-                      <span className="helper-text">
-                        The methodology used to assess materiality
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-field">
-                    <label>Assessment Frequency</label>
-                    <select
-                      defaultValue=""
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "assessmentFrequency",
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="" disabled>
-                        Select frequency
-                      </option>
-                      <option value="annual">Annual</option>
-                      <option value="biannual">Bi-annual</option>
-                      <option value="quarterly">Quarterly</option>
-                    </select>
-                    <span className="helper-text">
-                      How often your organization conducts materiality
-                      assessments
-                    </span>
-                  </div>
-                </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
                     <label>
-                      Top Material Topics <span className="required">*</span>
-                    </label>
-                    <textarea
-                      placeholder="List your top 3-5 material topics identified in your assessment"
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "materialTopics",
-                          e.target.value
-                        )
-                      }
-                      rows="4"
-                    ></textarea>
-                    <span className="helper-text">
-                      These are the issues that have the most significant impact
-                      on your business and stakeholders
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="form-field">
-                    <label>Last Assessment Date</label>
-                    <input
-                      type="date"
-                      onChange={(e) =>
-                        handleFormChange(
-                          "materiality",
-                          "lastAssessmentDate",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-field error">
-                    <label>
-                      Stakeholders Involved <span className="required">*</span>
+                      1.1 Which sustainability topics does your company have an
+                      impact on? (e.g. Climate change, Water use, Labour
+                      practices, Biodiversity, …)
                     </label>
                     <select
-                      defaultValue={[]}
+                      multiple
                       onChange={(e) => {
                         const selectedOptions = Array.from(
                           e.target.selectedOptions,
@@ -995,24 +895,17 @@ const CSRD = () => {
                         );
                         handleFormChange(
                           "materiality",
-                          "stakeholdersInvolved",
+                          "impactTopics",
                           selectedOptions
                         );
                       }}
-                      multiple
                     >
-                      <option value="employees">Employees</option>
-                      <option value="customers">Customers</option>
-                      <option value="suppliers">Suppliers</option>
-                      <option value="investors">Investors</option>
-                      <option value="localCommunities">
-                        Local Communities
-                      </option>
-                      <option value="ngos">NGOs</option>
+                      <option value="climateChange">Climate Change</option>
+                      <option value="waterUse">Water Use</option>
+                      <option value="labourPractices">Labour Practices</option>
+                      <option value="biodiversity">Biodiversity</option>
+                      {/* Add more options as needed */}
                     </select>
-                    <div className="error-message">
-                      Please select at least one stakeholder group
-                    </div>
                   </div>
                 </div>
               </div>
@@ -1020,18 +913,108 @@ const CSRD = () => {
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
-                    <label>Assessment Methodology Description</label>
-                    <textarea
-                      placeholder="Briefly describe how your organization conducted the materiality assessment..."
+                    <label>
+                      1.2 Which of those topics can have a material financial
+                      impact on your company?
+                    </label>
+                    <select
+                      multiple
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        );
+                        handleFormChange(
+                          "materiality",
+                          "financialImpactTopics",
+                          selectedOptions
+                        );
+                      }}
+                    >
+                      <option value="climateChange">Climate Change</option>
+                      <option value="waterUse">Water Use</option>
+                      <option value="labourPractices">Labour Practices</option>
+                      <option value="biodiversity">Biodiversity</option>
+                      {/* Add more options as needed */}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      1.3 For each selected topic, rate the severity of your
+                      company\u2019s impact on a scale of 1 (low) to 5 (high).
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
                       onChange={(e) =>
                         handleFormChange(
                           "materiality",
-                          "methodologyDescription",
+                          "impactSeverity",
                           e.target.value
                         )
                       }
-                      rows="3"
-                    ></textarea>
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      1.4 For each selected topic, rate the likelihood of that
+                      impact occurring on a scale of 1 (unlikely) to 5 (very
+                      likely).
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "materiality",
+                          "impactLikelihood",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      1.5 Based on the above, which topics do you consider
+                      material and should be included in your report?
+                    </label>
+                    <select
+                      multiple
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        );
+                        handleFormChange(
+                          "materiality",
+                          "materialTopics",
+                          selectedOptions
+                        );
+                      }}
+                    >
+                      <option value="climateChange">Climate Change</option>
+                      <option value="waterUse">Water Use</option>
+                      <option value="labourPractices">Labour Practices</option>
+                      <option value="biodiversity">Biodiversity</option>
+                      {/* Add more options as needed */}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -1052,40 +1035,153 @@ const CSRD = () => {
                 <div className="form-group full-width">
                   <div className="form-field">
                     <label>
-                      Stakeholder Groups <span className="required">*</span>
+                      2.1 Which stakeholder groups do you engage for
+                      sustainability input? (e.g. Employees, Suppliers, Local
+                      communities, NGOs, Investors)
+                    </label>
+                    <select
+                      multiple
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        );
+                        handleFormChange(
+                          "stakeholder",
+                          "engagedGroups",
+                          selectedOptions
+                        );
+                      }}
+                    >
+                      <option value="employees">Employees</option>
+                      <option value="suppliers">Suppliers</option>
+                      <option value="localCommunities">
+                        Local Communities
+                      </option>
+                      <option value="ngos">NGOs</option>
+                      <option value="investors">Investors</option>
+                      {/* Add more options as needed */}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      2.2 For each selected group, what engagement methods do
+                      you use? (e.g. Surveys, Workshops, Interviews, Town halls,
+                      Whistle‑blowing line)
+                    </label>
+                    <select
+                      multiple
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        );
+                        handleFormChange(
+                          "stakeholder",
+                          "engagementMethods",
+                          selectedOptions
+                        );
+                      }}
+                    >
+                      <option value="surveys">Surveys</option>
+                      <option value="workshops">Workshops</option>
+                      <option value="interviews">Interviews</option>
+                      <option value="townHalls">Town Halls</option>
+                      <option value="whistleBlowing">
+                        Whistle-blowing Line
+                      </option>
+                      {/* Add more options as needed */}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      2.3 How frequently do you engage each stakeholder group?
                     </label>
                     <select
                       onChange={(e) =>
                         handleFormChange(
                           "stakeholder",
-                          "stakeholderGroups",
+                          "engagementFrequency",
                           e.target.value
                         )
                       }
                     >
                       <option value="" disabled>
-                        Select stakeholder groups
+                        Select frequency
                       </option>
-                      <option value="employees">Employees</option>
-                      <option value="customers">Customers</option>
-                      <option value="investors">Investors</option>
-                      <option value="suppliers">Suppliers</option>
-                      <option value="communities">Local Communities</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="annually">Annually</option>
+                      <option value="adHoc">Ad-hoc</option>
                     </select>
                   </div>
                 </div>
               </div>
+
               <div className="form-row">
                 <div className="form-group full-width">
                   <div className="form-field">
-                    <label>Engagement Method</label>
+                    <label>
+                      2.4 Do you have an anonymous feedback/whistle-blowing
+                      mechanism?
+                    </label>
+                    <div>
+                      <input
+                        type="radio"
+                        id="whistleYes"
+                        name="whistleBlowing"
+                        value="yes"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "stakeholder",
+                            "whistleBlowing",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="whistleYes">Yes</label>
+                      <input
+                        type="radio"
+                        id="whistleNo"
+                        name="whistleBlowing"
+                        value="no"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "stakeholder",
+                            "whistleBlowing",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="whistleNo">No</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      2.5 Briefly describe how you record, track and follow up
+                      on stakeholder input.
+                    </label>
                     <textarea
-                      placeholder="Describe your stakeholder engagement methods"
                       rows="4"
                       onChange={(e) =>
                         handleFormChange(
                           "stakeholder",
-                          "engagementMethod",
+                          "stakeholderInputTracking",
                           e.target.value
                         )
                       }
@@ -1101,7 +1197,7 @@ const CSRD = () => {
               <div className="section-header">
                 <h2>Governance & Oversight</h2>
                 <p className="section-description">
-                  Detail your organization&apos;s governance structure for
+                  Detail your organization\u2019s governance structure for
                   sustainability issues.
                 </p>
               </div>
@@ -1110,20 +1206,147 @@ const CSRD = () => {
                 <div className="form-group full-width">
                   <div className="form-field">
                     <label>
-                      Sustainability Governance{" "}
-                      <span className="required">*</span>
+                      3.1 Who in your organisation is ultimately responsible for
+                      CSRD governance? (Name / Role)
                     </label>
-                    <textarea
-                      placeholder="Describe your sustainability governance structure"
-                      rows="4"
+                    <input
+                      type="text"
                       onChange={(e) =>
                         handleFormChange(
                           "governance",
-                          "sustainabilityGovernance",
+                          "responsiblePerson",
                           e.target.value
                         )
                       }
-                    ></textarea>
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      3.2 Which governing body oversees sustainability
+                      reporting?
+                    </label>
+                    <select
+                      onChange={(e) =>
+                        handleFormChange(
+                          "governance",
+                          "governingBody",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="" disabled>
+                        Select governing body
+                      </option>
+                      <option value="board">Board</option>
+                      <option value="esgCommittee">ESG Committee</option>
+                      <option value="auditCommittee">Audit Committee</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      3.3 How often does this body meet to review sustainability
+                      performance?
+                    </label>
+                    <select
+                      onChange={(e) =>
+                        handleFormChange(
+                          "governance",
+                          "meetingFrequency",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="" disabled>
+                        Select frequency
+                      </option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="annually">Annually</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      3.4 Do you have documented policies or charters governing
+                      sustainability data quality and process?
+                    </label>
+                    <div>
+                      <input
+                        type="radio"
+                        id="policiesYes"
+                        name="documentedPolicies"
+                        value="yes"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "governance",
+                            "documentedPolicies",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="policiesYes">Yes</label>
+                      <input
+                        type="radio"
+                        id="policiesNo"
+                        name="documentedPolicies"
+                        value="no"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "governance",
+                            "documentedPolicies",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="policiesNo">No</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      3.5 Please upload or link your organisational chart or
+                      governance policy.
+                    </label>
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "governance",
+                          "orgChart",
+                          e.target.files[0]
+                        )
+                      }
+                    />
+                    <input
+                      type="url"
+                      placeholder="Or enter URL"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "governance",
+                          "orgChartUrl",
+                          e.target.value
+                        )
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -1144,20 +1367,201 @@ const CSRD = () => {
                 <div className="form-group full-width">
                   <div className="form-field">
                     <label>
-                      Carbon Reduction Target{" "}
-                      <span className="required">*</span>
+                      4.1 For each material topic, please define your target
+                      (what, baseline, target value, deadline).
+                    </label>
+                    <div className="repeatable-table">
+                      {/* Repeatable table for targets */}
+                      <div className="table-row">
+                        <input
+                          type="text"
+                          placeholder="Target description"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "targetDescription",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <input
+                          type="number"
+                          placeholder="Baseline value"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "baselineValue",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <input
+                          type="date"
+                          placeholder="Baseline year"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "baselineYear",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <input
+                          type="number"
+                          placeholder="Target value"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "targetValue",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <input
+                          type="date"
+                          placeholder="Target year"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "targetYear",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      {/* Add more rows as needed */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      4.2 What milestones or interim dates have you set?
                     </label>
                     <input
-                      type="text"
-                      placeholder="e.g., 50% by 2030"
+                      type="date"
+                      multiple
+                      onChange={(e) =>
+                        handleFormChange("target", "milestones", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      4.3 List the actions you\u2019ll take to reach each
+                      target.
+                    </label>
+                    <div className="repeatable-group">
+                      {/* Repeatable group for actions */}
+                      <div className="group-row">
+                        <input
+                          type="text"
+                          placeholder="Action description"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "actionDescription",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <select
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "linkedTarget",
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option value="" disabled>
+                            Select linked target
+                          </option>
+                          {/* Options populated from 4.1 entries */}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Owner"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "actionOwner",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <input
+                          type="date"
+                          placeholder="Due date"
+                          onChange={(e) =>
+                            handleFormChange(
+                              "target",
+                              "dueDate",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      {/* Add more groups as needed */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      4.5 Do you update or revise targets/actions over time?
+                    </label>
+                    <div>
+                      <input
+                        type="radio"
+                        id="updateYes"
+                        name="updateTargets"
+                        value="yes"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "target",
+                            "updateTargets",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="updateYes">Yes</label>
+                      <input
+                        type="radio"
+                        id="updateNo"
+                        name="updateTargets"
+                        value="no"
+                        onChange={(e) =>
+                          handleFormChange(
+                            "target",
+                            "updateTargets",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <label htmlFor="updateNo">No</label>
+                    </div>
+                    <textarea
+                      placeholder="Optional comments"
                       onChange={(e) =>
                         handleFormChange(
                           "target",
-                          "carbonTarget",
+                          "updateComments",
                           e.target.value
                         )
                       }
-                    />
+                    ></textarea>
                   </div>
                 </div>
               </div>
@@ -1178,29 +1582,217 @@ const CSRD = () => {
                 <div className="form-group full-width">
                   <div className="form-field">
                     <label>
-                      Reporting Framework <span className="required">*</span>
+                      5.1 Which metrics/KPIs do you currently track for each
+                      target?
                     </label>
                     <select
-                      defaultValue=""
+                      multiple
+                      onChange={(e) => {
+                        const selectedOptions = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        );
+                        handleFormChange(
+                          "data",
+                          "trackedMetrics",
+                          selectedOptions
+                        );
+                      }}
+                    >
+                      <option value="metric1">Metric 1</option>
+                      <option value="metric2">Metric 2</option>
+                      {/* Add more options as needed */}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.2 For each metric, what is the data source? (e.g. ERP
+                      system, Manual survey, Third‑party provider)
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        handleFormChange("data", "dataSource", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>5.3 How often is each metric collected?</label>
+                    <select
                       onChange={(e) =>
                         handleFormChange(
                           "data",
-                          "reportingFramework",
+                          "collectionFrequency",
                           e.target.value
                         )
                       }
                     >
                       <option value="" disabled>
-                        Select reporting framework
+                        Select frequency
                       </option>
-                      <option value="gri">GRI Standards</option>
-                      <option value="sasb">SASB</option>
-                      <option value="tcfd">TCFD</option>
-                      <option value="csrd">CSRD</option>
+                      <option value="daily">Daily</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="annually">Annually</option>
                     </select>
-                    <span className="helper-text">
-                      The primary framework used for sustainability reporting
-                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.4 How would you rate the quality of each data source?
+                    </label>
+                    <select
+                      onChange={(e) =>
+                        handleFormChange("data", "dataQuality", e.target.value)
+                      }
+                    >
+                      <option value="" disabled>
+                        Select quality
+                      </option>
+                      <option value="poor">Poor</option>
+                      <option value="fair">Fair</option>
+                      <option value="good">Good</option>
+                      <option value="excellent">Excellent</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.5 Do you have any data gaps preventing you from tracking
+                      progress?
+                    </label>
+                    <div>
+                      <input
+                        type="radio"
+                        id="dataGapsYes"
+                        name="dataGaps"
+                        value="yes"
+                        onChange={(e) =>
+                          handleFormChange("data", "dataGaps", e.target.value)
+                        }
+                      />
+                      <label htmlFor="dataGapsYes">Yes</label>
+                      <input
+                        type="radio"
+                        id="dataGapsNo"
+                        name="dataGaps"
+                        value="no"
+                        onChange={(e) =>
+                          handleFormChange("data", "dataGaps", e.target.value)
+                        }
+                      />
+                      <label htmlFor="dataGapsNo">No</label>
+                    </div>
+                    <textarea
+                      placeholder="Describe data gaps"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "data",
+                          "dataGapsDescription",
+                          e.target.value
+                        )
+                      }
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.6 Do you maintain an audit trail for your data?
+                    </label>
+                    <div>
+                      <input
+                        type="radio"
+                        id="auditTrailYes"
+                        name="auditTrail"
+                        value="yes"
+                        onChange={(e) =>
+                          handleFormChange("data", "auditTrail", e.target.value)
+                        }
+                      />
+                      <label htmlFor="auditTrailYes">Yes</label>
+                      <input
+                        type="radio"
+                        id="auditTrailNo"
+                        name="auditTrail"
+                        value="no"
+                        onChange={(e) =>
+                          handleFormChange("data", "auditTrail", e.target.value)
+                        }
+                      />
+                      <label htmlFor="auditTrailNo">No</label>
+                    </div>
+                    <textarea
+                      placeholder="Describe audit trail"
+                      onChange={(e) =>
+                        handleFormChange(
+                          "data",
+                          "auditTrailDescription",
+                          e.target.value
+                        )
+                      }
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.7 In what format should your final CSRD report be
+                      exported?
+                    </label>
+                    <select
+                      onChange={(e) =>
+                        handleFormChange("data", "reportFormat", e.target.value)
+                      }
+                    >
+                      <option value="" disabled>
+                        Select format
+                      </option>
+                      <option value="pdf">PDF</option>
+                      <option value="excel">Excel</option>
+                      <option value="xbrl">XBRL</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <div className="form-field">
+                    <label>
+                      5.8 Who is responsible for preparing and submitting the
+                      report?
+                    </label>
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        handleFormChange("data", "reportOwner", e.target.value)
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -1303,7 +1895,7 @@ const CSRD = () => {
                   } ${message.error ? "error" : ""}`}
                 >
                   <div className="message-content">
-                    {message.content || " "}
+                    {(message.content || " ").replace(/\*/g, "")}
                     {message.role === "assistant" &&
                       loading &&
                       index === messages.length - 1 && (

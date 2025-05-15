@@ -104,7 +104,7 @@ const App = () => {
           path="/login"
           element={
             <>
-              <Navbar />
+              {/* <Navbar /> */}
               <Login />
             </>
           }
@@ -113,7 +113,7 @@ const App = () => {
           path="/signup"
           element={
             <>
-              <Navbar />
+              {/* <Navbar /> */}
               <Signup />
             </>
           }

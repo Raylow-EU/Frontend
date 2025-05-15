@@ -106,8 +106,10 @@
 
 .tab-button.active {
   background-color: #f85a2b;
-  color: white;
-  box-shadow: 0 4px 12px rgba(248, 90, 43, 0.2);
+  /* color: #000000; */
+  /* font-weight: 700; */
+  /* box-shadow: 0 4px 12px rgba(248, 90, 43, 0.2); */
+  /* text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5); */
 }
 
 /* Steps Section */

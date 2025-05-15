@@ -7,13 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:userdata": "node src/scripts/testUserData.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@reduxjs/toolkit": "^2.6.0",
     "axios": "^1.8.2",
     "chart.js": "^4.4.8",
+    "dotenv": "^16.4.5",
     "firebase": "^11.3.1",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.0",

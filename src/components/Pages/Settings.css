@@ -84,8 +84,9 @@
 }
 
 .tab-button.active {
-  color: #f85a2b;
-  border-bottom-color: #f85a2b;
+  color: #fffdfd;
+  /* font-weight: 700; */
+  /* border-bottom-color: #f85a2b; */
 }
 
 .tab-notification {
